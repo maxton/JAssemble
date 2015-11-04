@@ -247,6 +247,21 @@ public class AssemblerTest {
   
   /**
    * Test of assemble method, of class Assembler. (move instruction)
+   * li $rd, IMM implemented as:
+   * clr $rd (which is really like clr $rd, 0 $rd)
+   * ori $rd, $rd, IMM
+   */
+  @Test
+  public void testAssembleLi() throws Exception {
+    System.out.println("Assemble move pseudo-instruction");
+    Assembler instance = new Assembler("main: li $1, -1\nli $3, 4");
+    int[] expResult = {0xD140, 0x85FF, 0xD3C0, 0x8F04};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (move instruction)
    * Note: should be move $rs, $rd (unlike in MIPS)
    * (according to text document)
    * This implementation does move $rs, $rd --> or $rd, $rs, $rs

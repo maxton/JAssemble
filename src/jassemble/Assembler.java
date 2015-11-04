@@ -214,11 +214,11 @@ public class Assembler {
         R[rd] = IMM
         
         implemented as:
-        clr $rd
+        clr $rd (clr $rd, 0, $rd)
         ori $rd, $rd, IMM
       */
       case "li":
-        this.instructions.add(new RegisterInstruction(Opcode.CLR, 0, regToInt(arg1), regToInt(arg1)));
+        this.instructions.add(new RegisterInstruction(Opcode.CLR, regToInt(arg1), 0, regToInt(arg1)));
         this.currentInstruction++;
         ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg1), Integer.decode(arg2));
         break;
