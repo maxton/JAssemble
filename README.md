@@ -27,17 +27,19 @@ A simple 8-bit RISC assembler written in Java.
 ### Example of supported assembly code:
 
 ```
-main: clr $0
-      addi $1, $0, 9
-loop: addi $0, $0, 1
+main: li $0, 9
+      li $1, 0
+      clr $2
+loop: subi $0, $0, 1
+      addi $2, $2, 1
       beq $0, $1, end
       j loop
 end:
-      inv $0, $1
+      inv $2, $2
 ```
 
 Output for the above code:
 ```
 memory_initialization_radix=16;
-memory_initialization_vector=d000,3409,3001,b102,b0fe,4400;
+memory_initialization_vector=d000,8009,d140,8500,d280,30ff,3a01,b102,b0fd,4880;
 ```
