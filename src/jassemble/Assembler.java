@@ -62,7 +62,7 @@ public class Assembler {
   }
   
   /**
-   * Strip the $ from a register, turn it into a string.
+   * Strip the $ from a register, turn it into an int.
    * @param reg String like "$1"
    * @return 
    */
