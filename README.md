@@ -43,3 +43,26 @@ Output for the above code:
 memory_initialization_radix=16;
 memory_initialization_vector=d000,8009,d140,8500,d280,30ff,3a01,b102,b0fd,4880;
 ```
+
+### Example of useful error messages:
+```
+mov $0, $2
+addi $1, $2, $3
+add $0, $2, $4
+sub $0, $2, 3
+```
+
+Will show as errors:
+
+```
+Error: at line 1,
+ Invalid instruction encountered: mov
+Error: at line 2,
+ For input string: "$3"
+Error: at line 3,
+ Register $4 is invalid.
+Error: at line 4,
+ Expected register, found 3
+Couldn't assemble code:
+ One or more instructions were malformed.
+```
