@@ -66,3 +66,8 @@ Error: at line 4,
 Couldn't assemble code:
  One or more instructions were malformed.
 ```
+
+## Usage
+JAssembler is mainly a GUI application. Simply type in or load a piece of
+assembly code and press "Assemble!".
+![Running the Assembler](//i.imgur.com/uvT97nx.png)
