@@ -52,6 +52,14 @@ public abstract class Instruction {
     return this.rt;
   }
   
+  /**
+   * Decompiles an instruction given machine code. You will end up with duplicate labels. Actual
+   * decompiler code should deal with that.
+   * @param word The machine code.
+   * @param instructionNum The offset of the instruction from the beginning of the file.
+   * @return The decompiled instruction.
+   * @throws InvalidInstructionException 
+   */
   public static Instruction fromWord(int word, int instructionNum) 
           throws InvalidInstructionException {
     word &= 0xFFFF;

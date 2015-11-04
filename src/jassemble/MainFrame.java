@@ -66,7 +66,8 @@ public class MainFrame extends javax.swing.JFrame {
         }
       }
     } catch (InvalidInstructionException ex) {
-      Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+      tabPane.setSelectedIndex(1);
+      errorTextArea.setText("Couldn't assemble code:\n " + ex.getMessage() + "\n");
     }
   }
 
@@ -77,19 +78,26 @@ public class MainFrame extends javax.swing.JFrame {
   @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
+    java.awt.GridBagConstraints gridBagConstraints;
 
     AboutPopup = new javax.swing.JDialog();
     jLabel1 = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
     jLabel5 = new javax.swing.JLabel();
     fileChooser = new javax.swing.JFileChooser();
-    jScrollPane1 = new javax.swing.JScrollPane();
+    jFrame1 = new javax.swing.JFrame();
+    jPanel2 = new javax.swing.JPanel();
+    assemblyCodeLabel = new javax.swing.JLabel();
+    jScrollPane3 = new javax.swing.JScrollPane();
     assemblyTextArea = new javax.swing.JTextArea();
-    jLabel3 = new javax.swing.JLabel();
+    assembleButton = new javax.swing.JButton();
+    tabPane = new javax.swing.JTabbedPane();
+    jPanel3 = new javax.swing.JPanel();
     jScrollPane2 = new javax.swing.JScrollPane();
     machineCode = new javax.swing.JTextArea();
-    jLabel4 = new javax.swing.JLabel();
-    jButton1 = new javax.swing.JButton();
+    jPanel4 = new javax.swing.JPanel();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    errorTextArea = new javax.swing.JTextArea();
     jMenuBar1 = new javax.swing.JMenuBar();
     jMenu1 = new javax.swing.JMenu();
     openFileMenuItem = new javax.swing.JMenuItem();
@@ -98,6 +106,7 @@ public class MainFrame extends javax.swing.JFrame {
     jMenu2 = new javax.swing.JMenu();
 
     AboutPopup.setTitle("About JAssemble");
+    AboutPopup.setLocationByPlatform(true);
     AboutPopup.setMaximumSize(new java.awt.Dimension(300, 150));
     AboutPopup.setMinimumSize(new java.awt.Dimension(300, 150));
     AboutPopup.setModal(true);
@@ -133,28 +142,117 @@ public class MainFrame extends javax.swing.JFrame {
         .addGap(0, 54, Short.MAX_VALUE))
     );
 
+    javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
+    jFrame1.getContentPane().setLayout(jFrame1Layout);
+    jFrame1Layout.setHorizontalGroup(
+      jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 400, Short.MAX_VALUE)
+    );
+    jFrame1Layout.setVerticalGroup(
+      jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 300, Short.MAX_VALUE)
+    );
+
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("JAssemble");
+    setLocationByPlatform(true);
+    setMinimumSize(new java.awt.Dimension(500, 500));
+    setPreferredSize(new java.awt.Dimension(520, 540));
+    getContentPane().setLayout(new java.awt.GridLayout(2, 1));
+
+    jPanel2.setLayout(new java.awt.GridBagLayout());
+
+    assemblyCodeLabel.setText("Assembly Code:");
+    assemblyCodeLabel.setAlignmentY(0.0F);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 0;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    gridBagConstraints.insets = new java.awt.Insets(0, 13, 0, 3);
+    jPanel2.add(assemblyCodeLabel, gridBagConstraints);
 
     assemblyTextArea.setColumns(20);
     assemblyTextArea.setRows(5);
-    jScrollPane1.setViewportView(assemblyTextArea);
+    jScrollPane3.setViewportView(assemblyTextArea);
 
-    jLabel3.setText("Assembly Code:");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 1;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+    gridBagConstraints.weightx = 1.0;
+    gridBagConstraints.weighty = 1.0;
+    gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
+    jPanel2.add(jScrollPane3, gridBagConstraints);
+
+    assembleButton.setText("Assemble!");
+    assembleButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        assembleButtonActionPerformed(evt);
+      }
+    });
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 0;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+    gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+    jPanel2.add(assembleButton, gridBagConstraints);
+
+    getContentPane().add(jPanel2);
+
+    jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 180));
+    jScrollPane2.setMinimumSize(new java.awt.Dimension(2, 2));
+    jScrollPane2.setPreferredSize(new java.awt.Dimension(480, 180));
 
     machineCode.setColumns(20);
     machineCode.setLineWrap(true);
     machineCode.setRows(5);
     jScrollPane2.setViewportView(machineCode);
 
-    jLabel4.setText("Machine Code:");
+    javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+    jPanel3.setLayout(jPanel3Layout);
+    jPanel3Layout.setHorizontalGroup(
+      jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel3Layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+        .addContainerGap())
+    );
+    jPanel3Layout.setVerticalGroup(
+      jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+        .addContainerGap())
+    );
 
-    jButton1.setText("Assemble!");
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
-      }
-    });
+    tabPane.addTab("Machine Code", jPanel3);
+
+    errorTextArea.setEditable(false);
+    errorTextArea.setColumns(20);
+    errorTextArea.setRows(5);
+    jScrollPane1.setViewportView(errorTextArea);
+
+    javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+    jPanel4.setLayout(jPanel4Layout);
+    jPanel4Layout.setHorizontalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel4Layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+        .addContainerGap())
+    );
+    jPanel4Layout.setVerticalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel4Layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+        .addContainerGap())
+    );
+
+    tabPane.addTab("Errors", jPanel4);
+
+    getContentPane().add(tabPane);
 
     jMenu1.setText("File");
 
@@ -200,38 +298,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     setJMenuBar(jMenuBar1);
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(layout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-          .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jLabel3)
-              .addComponent(jLabel4)
-              .addComponent(jButton1))
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
-    );
-    layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(layout.createSequentialGroup()
-        .addComponent(jLabel3)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jButton1)
-        .addGap(11, 11, 11)
-        .addComponent(jLabel4)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-        .addContainerGap())
-    );
-
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
@@ -250,9 +316,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
   }//GEN-LAST:event_saveAssemblyAsMenuItemActionPerformed
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+  private void assembleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assembleButtonActionPerformed
     this.assemble();
-  }//GEN-LAST:event_jButton1ActionPerformed
+  }//GEN-LAST:event_assembleButtonActionPerformed
 
   private void saveAssemblyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAssemblyMenuItemActionPerformed
     this.saveFile();
@@ -290,22 +356,28 @@ public class MainFrame extends javax.swing.JFrame {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JDialog AboutPopup;
+  private javax.swing.JButton assembleButton;
+  private javax.swing.JLabel assemblyCodeLabel;
   private javax.swing.JTextArea assemblyTextArea;
+  private javax.swing.JTextArea errorTextArea;
   private javax.swing.JFileChooser fileChooser;
-  private javax.swing.JButton jButton1;
+  private javax.swing.JFrame jFrame1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
-  private javax.swing.JLabel jLabel3;
-  private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
   private javax.swing.JMenuBar jMenuBar1;
+  private javax.swing.JPanel jPanel2;
+  private javax.swing.JPanel jPanel3;
+  private javax.swing.JPanel jPanel4;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JTextArea machineCode;
   private javax.swing.JMenuItem openFileMenuItem;
   private javax.swing.JMenuItem saveAssemblyAsMenuItem;
   private javax.swing.JMenuItem saveAssemblyMenuItem;
+  private javax.swing.JTabbedPane tabPane;
   // End of variables declaration//GEN-END:variables
 }

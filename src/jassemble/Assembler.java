@@ -22,12 +22,24 @@ public class Assembler {
   private final String[] sourceLines;
   private int currentInstruction;
   
+  /**
+   * Instantiate an assembler with the given source code.
+   * @param source All the source code in a string.
+   */
   public Assembler(String source) {
     source = source.replaceAll("\r", "").replaceAll("\t"," ");
     sourceLines = source.split("\n");
-    
   }
   
+  /**
+   * Gets an instance of a label, given its name. Updates its line / instruction numbers if
+   * update is true.
+   * @param name The label's name.
+   * @param lineNum Which line of code has the label.
+   * @param instructionNum Where the label sits in the sequence of instructions.
+   * @param update Should update line and instruction numbers?
+   * @return 
+   */
   private Label getLabel(String name, int lineNum, int instructionNum, boolean update){
     if(!labels.containsKey(name)){
       labels.put(name, new Label(lineNum,instructionNum));
@@ -40,10 +52,20 @@ public class Assembler {
     return ret;
   }
   
+  /**
+   * Find the label with the given name, or create a blank one with the given name.
+   * @param name
+   * @return 
+   */
   private Label getLabel(String name){
     return getLabel(name, 0, 0, false);
   }
   
+  /**
+   * Strip the $ from a register, turn it into a string.
+   * @param reg String like "$1"
+   * @return 
+   */
   private int regToInt(String reg){
     return Integer.decode(reg.substring(1));
   }
@@ -168,6 +190,11 @@ public class Assembler {
     this.currentInstruction++;
   }
   
+  /**
+   * Assemble the internal assembly code to machine instruction words.
+   * @return Array of instruction words.
+   * @throws InvalidInstructionException 
+   */
   public int[] assemble() throws InvalidInstructionException{
     int[] ret;
     this.labels = new HashMap<>();
