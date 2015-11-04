@@ -18,3 +18,4 @@ A simple 8-bit RISC assembler written in Java.
 |`beq $rs, $rd, LABEL`  | J | `PC = (R[rs] == R[rd]) ? PC + offset(LABEL) : PC + 4`  |
 |`bne $rs, $rd, LABEL`  | J | `PC = (R[rs] != R[rd]) ? PC + offset(LABEL) : PC + 4`  |
 |`clr $rd`              | R | `R[rd] = 0`                 |
+
