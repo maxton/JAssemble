@@ -30,3 +30,9 @@ loop: addi $0, $0, 1
 end:
       inv $0, $1
 ```
+
+### Output for the above code:
+```
+memory_initialization_radix=16;
+memory_initialization_vector=d000,3409,3001,b102,b0fe,4400;
+```
