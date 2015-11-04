@@ -38,6 +38,29 @@ public class AssemblerTest {
   }
 
   /**
+   * Test of assemble method, of class Assembler. (lw instruction)
+   */
+  @Test
+  public void testAssembleLw() throws Exception {
+    System.out.println("Assemble lw instruction");
+    Assembler instance = new Assembler("main: lw $1, $2, 5\nlw $3, $1, -6");
+    int[] expResult = {0x0605, 0x0DFA};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  /**
+   * Test of assemble method, of class Assembler. (sw instruction)
+   */
+  @Test
+  public void testAssembleSw() throws Exception {
+    System.out.println("Assemble sw instruction");
+    Assembler instance = new Assembler("main: sw $1, $2, 5\nsw $3, $1, -6");
+    int[] expResult = {0x1605, 0x1DFA};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
    * Test of assemble method, of class Assembler. (add instruction)
    */
   @Test
@@ -86,7 +109,7 @@ public class AssemblerTest {
   }
   
   /**
-   * Test of assemble method, of class Assembler. (add instruction)
+   * Test of assemble method, of class Assembler. (or instruction)
    */
   @Test
   public void testAssembleOr() throws Exception {
@@ -98,13 +121,77 @@ public class AssemblerTest {
   }
   
   /**
-   * Test of assemble method, of class Assembler. (andi instruction)
+   * Test of assemble method, of class Assembler. (ori instruction)
    */
   @Test
   public void testAssembleOri() throws Exception {
     System.out.println("Assemble ori instruction");
     Assembler instance = new Assembler("main: ori $1, $2, 5\nori $3, $1, -6");
     int[] expResult = {0x8605, 0x8DFA};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (sra instruction)
+   */
+  @Test
+  public void testAssembleSra() throws Exception {
+    System.out.println("Assemble sra instruction");
+    // are negative shifts valid? I don't think so...
+    Assembler instance = new Assembler("main: sra $1, $2, 5\nsra $3, $1, 7");
+    int[] expResult = {0x9605, 0x9D07};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (sll instruction)
+   */
+  @Test
+  public void testAssembleSll() throws Exception {
+    System.out.println("Assemble sll instruction");
+    // are negative shifts valid? I don't think so...
+    Assembler instance = new Assembler("main: sll $1, $2, 5\nsll $3, $1, 7");
+    int[] expResult = {0xA605, 0xAD07};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (beq instruction)
+   */
+  @Test
+  public void testAssembleBeq() throws Exception {
+    System.out.println("Assemble beq instruction");
+    // are negative shifts valid? I don't think so...
+    Assembler instance = new Assembler("main: beq $1, $2, end\nbeq $3, $1, main\nend:");
+    int[] expResult = {0xB602, 0xBDFF};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (bne instruction)
+   */
+  @Test
+  public void testAssembleBne() throws Exception {
+    System.out.println("Assemble bne instruction");
+    // are negative shifts valid? I don't think so...
+    Assembler instance = new Assembler("main: bne $1, $2, end\nbne $3, $1, main\nend:");
+    int[] expResult = {0xC602, 0xCDFF};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (or instruction)
+   */
+  @Test
+  public void testAssembleClr() throws Exception {
+    System.out.println("Assemble clr instruction");
+    Assembler instance = new Assembler("main: clr $0\nclr $1");
+    int[] expResult = {0xD000, 0xD140};
     int[] result = instance.assemble();
     assertArrayEquals(expResult, result);
   }

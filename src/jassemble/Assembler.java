@@ -123,8 +123,10 @@ public class Assembler {
       case "bne":
         ret = new JumpInstruction(Opcode.BNE, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
         break;
-      case "clr":
-        ret = new RegisterInstruction(Opcode.CLR, 0, regToInt(arg1), regToInt(arg1));
+        // the spec is not very clear about what to do for clr. it says
+        // that for "clr $rt" that rd = rt and rs = 0
+      case "clr": 
+        ret = new RegisterInstruction(Opcode.CLR, regToInt(arg1), 0, regToInt(arg1));
         break;
       
         // Pseudoinstructions:
