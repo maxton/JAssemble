@@ -85,6 +85,18 @@ public class AssemblerTest {
   }
   
   /**
+   * Test of assemble method, of class Assembler. (inv instruction)
+   * @throws Exception 
+   */
+  @Test
+  public void testAssembleInv() throws Exception {
+    System.out.println("Assemble inv instruction");
+    Assembler instance = new Assembler("main: inv $1, $2\ninv $3, $1");
+    int[] expResult = {0x4840, 0x44C0};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  /**
    * Test of assemble method, of class Assembler. (add instruction)
    */
   @Test
@@ -192,6 +204,58 @@ public class AssemblerTest {
     System.out.println("Assemble clr instruction");
     Assembler instance = new Assembler("main: clr $0\nclr $1");
     int[] expResult = {0xD000, 0xD140};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (j pseudo-instruction)
+   */
+  @Test
+  public void testAssembleJ() throws Exception {
+    System.out.println("Assemble j pseudo-instruction");
+    Assembler instance = new Assembler("main: j lbl\nlw $0, $0, 0\nlbl:j main");
+    int[] expResult = {0xB002, 0x0000, 0xB0FE};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (sub pseudo-instruction)
+   */
+  @Test
+  public void testAssembleSub() throws Exception {
+    System.out.println("Assemble sub pseudo-instruction");
+    Assembler instance = new Assembler("main: sub $3, $2, $1\nsub $0, $1, $2");
+    int[] expResult = {0x44C0, 0x3B01, 0x4800, 0x3401};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (subi instruction)
+   * subi $rs, $rd, IMM --> R[rd] = R[rs] - IMM
+   */
+  @Test
+  public void testAssembleSubi() throws Exception {
+    System.out.println("Assemble subi pseudo-instruction");
+    Assembler instance = new Assembler("main: subi $1, $2, 5\nsubi $3, $1, -6");
+    int[] expResult = {0x36FB, 0x3D06};
+    int[] result = instance.assemble();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (move instruction)
+   * Note: should be move $rs, $rd (unlike in MIPS)
+   * (according to text document)
+   * This implementation does move $rs, $rd --> or $rd, $rs, $rs
+   */
+  @Test
+  public void testAssembleMove() throws Exception {
+    System.out.println("Assemble move pseudo-instruction");
+    Assembler instance = new Assembler("main: move $1, $2\nmove $3, $0");
+    int[] expResult = {0x7A40, 0x70C0};
     int[] result = instance.assemble();
     assertArrayEquals(expResult, result);
   }

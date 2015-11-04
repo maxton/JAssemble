@@ -90,6 +90,7 @@ public class Assembler {
           String op, String arg1, String arg2, String arg3) throws InvalidInstructionException, Exception{
     op = op.toLowerCase();
     Instruction ret;
+    // Never forget: immediate instructions have rs first, register instructions have rd first
     switch (op) {
       case "lw":
         expectReg(arg1);
@@ -179,19 +180,19 @@ public class Assembler {
         
         implemented as:
         inv $rd, $rt
-        addi $rd, $rs, 1
+        addi $rs, $rd, 1
       */
       case "sub":
         this.instructions.add(new RegisterInstruction(Opcode.INV, regToInt(arg1), regToInt(arg3), 0));
         this.currentInstruction++;
-        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), 1);
+        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg2), regToInt(arg1), 1);
         break;
       /*
         subi $rs, $rd, IMM
         R[rd] = rs - IMM
         
         implemented as:
-        addi $rd, $rs, (-IMM)
+        addi $rs, $rd, (-IMM)
         
         (the assembler makes the immediate negative)
       */
@@ -279,7 +280,10 @@ public class Assembler {
         continue;
       }
     }
+    
     if(error){
+      // We only kept going so that all syntax errors would be revealed.
+      // So, we still need to error-out and quit the assembly process.
       throw new Exception("One or more instructions were malformed.");
     }
     ret = new int[currentInstruction];
