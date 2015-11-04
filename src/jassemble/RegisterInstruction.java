@@ -1,20 +1,32 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015 Maxton Connor
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package jassemble;
 
 /**
- *
+ * Represents an R-type instruction.
  * @author Max
  */
 public class RegisterInstruction extends Instruction {
   private byte rd;
   
   /**
-   * Instantiate an R-type instruction. Note the order of the constructor. 
-   * It follows the assembly order, not the machine code order.
+   * Instantiate an R-type instruction. Note the order of the constructor: it
+   * follows the assembly order, not the machine code order. Also note that for 
+   * INV and CLR, the format is different.
    * 
    * @param op The Opcode. Should be AND, INV, OR, or CLR.
    * @param rd The destination register.

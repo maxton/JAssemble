@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2015 Maxton Connor
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package jassemble;
 
@@ -13,7 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Represents an object that takes some form of assembly code and turns it into
+ * some form of machine code.
  * @author Max
  */
 public class Assembler {
@@ -200,6 +212,12 @@ public class Assembler {
     this.currentInstruction++;
   }
   
+  /**
+   * Assemble the internal assembly code to machine instruction words.
+   * @return Array of instruction words.
+   * @throws InvalidInstructionException
+   * @throws Exception 
+   */
   public int[] assemble() throws InvalidInstructionException, Exception {
     return assemble(null);
   }
@@ -209,6 +227,7 @@ public class Assembler {
    * @param mp Where to send warning messages.
    * @return Array of instruction words.
    * @throws InvalidInstructionException 
+   * @throws Exception
    */
   public int[] assemble(MessagePasser mp) throws InvalidInstructionException, Exception{
     int[] ret;
@@ -265,6 +284,10 @@ public class Assembler {
     return ret;
   }
   
+  /**
+   * For testing...
+   * @param args 
+   */
   public static void main(String[] args){
     Assembler a = new Assembler("main: add $0, $0, $1\nadd $0, $1, $2\nj main\nlabel:");
     try {
