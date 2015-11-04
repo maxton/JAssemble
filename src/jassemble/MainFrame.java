@@ -42,11 +42,30 @@ public class MainFrame extends javax.swing.JFrame {
     }
   }
   
-  private void saveFile(){
+  private void saveFile() {
     if(this.currentFile == null) return;
     try {
       Util.saveFile(currentFile.getPath(), assemblyTextArea.getText());
     } catch (IOException ex) {
+      Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+  
+  private void assemble() {
+    Assembler as = new Assembler(assemblyTextArea.getText());
+    try {
+      int[] assembledWords = as.assemble();
+      int i = 0;
+      machineCode.setText("memory_initialization_radix=16;\nmemory_initialization_vector=");
+      for(int word : assembledWords) {
+        machineCode.append(String.format("%1$04x", (short)word));
+        if(++i < assembledWords.length){
+          machineCode.append(",");
+        } else {
+          machineCode.append(";\n");
+        }
+      }
+    } catch (InvalidInstructionException ex) {
       Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
@@ -232,22 +251,7 @@ public class MainFrame extends javax.swing.JFrame {
   }//GEN-LAST:event_saveAssemblyAsMenuItemActionPerformed
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Assembler as = new Assembler(assemblyTextArea.getText());
-    try {
-      int[] assembledWords = as.assemble();
-      int i = 0;
-      machineCode.setText("memory_initialization_radix=16;\nmemory_initialization_vector=");
-      for(int word : assembledWords) {
-        machineCode.append(String.format("%1$04x", (short)word));
-        if(++i < assembledWords.length){
-          machineCode.append(",");
-        } else {
-          machineCode.append(";\n");
-        }
-      }
-    } catch (InvalidInstructionException ex) {
-      Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-    }
+    this.assemble();
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void saveAssemblyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAssemblyMenuItemActionPerformed
