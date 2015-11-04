@@ -66,15 +66,13 @@ public class Assembler {
    * @param reg String like "$1"
    * @return 
    */
-  private int regToInt(String reg){
-    return Integer.decode(reg.substring(1));
-  }
-  
-  private void expectReg(String arg) throws Exception{
-    if(arg.charAt(0) != '$')
-      throw new Exception("Expected register, found "+arg+"\n");
-    if(regToInt(arg) > 3 || regToInt(arg) < 0)
-      throw new Exception("Register "+arg+" is invalid.\n");
+  private int regToInt(String reg) throws Exception{
+    if(reg.charAt(0) != '$')
+      throw new Exception("Expected register, found "+reg+"\n");
+    int intVal = Integer.decode(reg.substring(1));
+    if(intVal > 3 || intVal < 0)
+      throw new Exception("Register "+reg+" is invalid.\n");
+    return intVal;
   }
   
   /**
@@ -93,71 +91,42 @@ public class Assembler {
     // Never forget: immediate instructions have rs first, register instructions have rd first
     switch (op) {
       case "lw":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.LW, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sw":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SW, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "add":
-        expectReg(arg1);
-        expectReg(arg2);
-        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.ADD, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "addi":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "inv":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new RegisterInstruction(Opcode.INV, regToInt(arg1), regToInt(arg2), 0);
         break;
       case "and":
-        expectReg(arg1);
-        expectReg(arg2);
-        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.AND, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "andi":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ANDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "or":
-        expectReg(arg1);
-        expectReg(arg2);
-        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "ori":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sra":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SRA, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sll":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SLL, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "beq":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new JumpInstruction(Opcode.BEQ, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
         break;
       case "bne":
-        expectReg(arg1);
-        expectReg(arg2);
         ret = new JumpInstruction(Opcode.BNE, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
         break;
         // the spec is not very clear about what to do for clr. it says
