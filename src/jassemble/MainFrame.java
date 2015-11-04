@@ -285,7 +285,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     saveAssemblyAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
     saveAssemblyAsMenuItem.setText("Save assembly as...");
-    saveAssemblyAsMenuItem.setEnabled(false);
     saveAssemblyAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         saveAssemblyAsMenuItemActionPerformed(evt);
@@ -320,6 +319,7 @@ public class MainFrame extends javax.swing.JFrame {
     if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       this.currentFile = fileChooser.getSelectedFile();
       this.saveFile();
+      this.saveAssemblyMenuItem.setEnabled(true);
     }
   }//GEN-LAST:event_saveAssemblyAsMenuItemActionPerformed
 
