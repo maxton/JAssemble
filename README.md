@@ -19,3 +19,14 @@ A simple 8-bit RISC assembler written in Java.
 |`bne $rs, $rd, LABEL`  | J | `PC = (R[rs] != R[rd]) ? PC + offset(LABEL) : PC + 4`  |
 |`clr $rd`              | R | `R[rd] = 0`                 |
 
+### Example of supported assembly code:
+
+```
+main: clr $0
+      addi $1, $0, 9
+loop: addi $0, $0, 1
+      beq $0, $1, end
+      j loop
+end:
+      inv $0, $1
+```
