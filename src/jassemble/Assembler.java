@@ -138,7 +138,29 @@ public class Assembler {
       case "subi":
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), -Integer.decode(arg3));
         break;
-      
+      /*
+        move $rs, $rd
+        R[rd] = R[rs]
+        
+        implemented as:
+        or $rd, $rs, $rs
+      */
+      case "move":
+        ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg2));
+        break;
+      /*
+        li $rd, IMM
+        R[rd] = IMM
+        
+        implemented as:
+        clr $rd
+        ori $rd, $rd, IMM
+      */
+      case "li":
+        this.instructions.add(new RegisterInstruction(Opcode.CLR, 0, regToInt(arg1), regToInt(arg1)));
+        this.currentInstruction++;
+        ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg1), Integer.decode(arg2));
+        break;
       default:
         throw new InvalidInstructionException(op);
     }
