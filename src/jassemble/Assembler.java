@@ -67,11 +67,13 @@ public class Assembler {
    * @return 
    */
   private int regToInt(String reg) throws Exception{
+    if(reg == null)
+      throw new Exception("Expected register, found none!");
     if(reg.charAt(0) != '$')
-      throw new Exception("Expected register, found "+reg+"\n");
+      throw new Exception("Expected register, found "+reg);
     int intVal = Integer.decode(reg.substring(1));
     if(intVal > 3 || intVal < 0)
-      throw new Exception("Register "+reg+" is invalid.\n");
+      throw new Exception("Register "+reg+" is invalid.");
     return intVal;
   }
   
@@ -236,7 +238,7 @@ public class Assembler {
           this.addInstruction(m1.group(3), m1.group(4), m1.group(6), m1.group(8));
         } catch(Exception e) {
           if(mp != null){
-            mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage());
+            mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage()+"\n");
             error = true;
           }
         }
