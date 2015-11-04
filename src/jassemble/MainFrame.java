@@ -62,6 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
     AboutPopup = new javax.swing.JDialog();
     jLabel1 = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
+    jLabel5 = new javax.swing.JLabel();
     fileChooser = new javax.swing.JFileChooser();
     jScrollPane1 = new javax.swing.JScrollPane();
     assemblyTextArea = new javax.swing.JTextArea();
@@ -91,12 +92,16 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel2.setText("©2015 Maxton Connor");
 
+    jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    jLabel5.setText("Version 0.1");
+
     javax.swing.GroupLayout AboutPopupLayout = new javax.swing.GroupLayout(AboutPopup.getContentPane());
     AboutPopup.getContentPane().setLayout(AboutPopupLayout);
     AboutPopupLayout.setHorizontalGroup(
       AboutPopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
       .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
     AboutPopupLayout.setVerticalGroup(
       AboutPopupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,7 +109,9 @@ public class MainFrame extends javax.swing.JFrame {
         .addComponent(jLabel1)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jLabel2)
-        .addGap(0, 87, Short.MAX_VALUE))
+        .addGap(18, 18, 18)
+        .addComponent(jLabel5)
+        .addGap(0, 54, Short.MAX_VALUE))
     );
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -286,6 +293,7 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
   private javax.swing.JMenuBar jMenuBar1;
