@@ -267,7 +267,7 @@ public class Assembler {
           this.addInstruction(m1.group(3), m1.group(4), m1.group(6), m1.group(8));
         } catch(Exception e) {
           if(mp != null){
-            mp.sendMessage("Error at line "+(i+1)+":\n "+e.getMessage());
+            mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage());
             error = true;
           }
         }
@@ -275,7 +275,7 @@ public class Assembler {
         getLabel(m2.group(2), i+1, currentInstruction, true);
       } else {
         if(mp!=null){
-          mp.sendMessage("Can't parse line "+(i+1)+", ignoring...\n");
+          mp.sendMessage("Warning: Can't understand line "+(i+1)+", ignoring entire line...\n");
         }
         continue;
       }
