@@ -70,6 +70,13 @@ public class Assembler {
     return Integer.decode(reg.substring(1));
   }
   
+  private void expectReg(String arg) throws Exception{
+    if(arg.charAt(0) != '$')
+      throw new Exception("Expected register, found "+arg+"\n");
+    if(regToInt(arg) > 3 || regToInt(arg) < 0)
+      throw new Exception("Register "+arg+" is invalid.\n");
+  }
+  
   /**
    * Add the instruction described by op, arg1, arg2, arg3 to the array of instructions.
    * Will properly handle pseudo-instructions.
@@ -80,47 +87,76 @@ public class Assembler {
    * @throws InvalidInstructionException 
    */
   private void addInstruction(
-          String op, String arg1, String arg2, String arg3) throws InvalidInstructionException{
+          String op, String arg1, String arg2, String arg3) throws InvalidInstructionException, Exception{
     op = op.toLowerCase();
     Instruction ret;
     switch (op) {
       case "lw":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.LW, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sw":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SW, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "add":
+        expectReg(arg1);
+        expectReg(arg2);
+        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.ADD, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "addi":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "inv":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new RegisterInstruction(Opcode.INV, regToInt(arg1), regToInt(arg2), 0);
         break;
       case "and":
+        expectReg(arg1);
+        expectReg(arg2);
+        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.AND, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "andi":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ANDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "or":
+        expectReg(arg1);
+        expectReg(arg2);
+        expectReg(arg3);
         ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "ori":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sra":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SRA, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "sll":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new ImmediateInstruction(Opcode.SLL, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "beq":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new JumpInstruction(Opcode.BEQ, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
         break;
       case "bne":
+        expectReg(arg1);
+        expectReg(arg2);
         ret = new JumpInstruction(Opcode.BNE, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
         break;
         // the spec is not very clear about what to do for clr. it says
@@ -192,26 +228,31 @@ public class Assembler {
     this.currentInstruction++;
   }
   
+  public int[] assemble() throws InvalidInstructionException, Exception {
+    return assemble(null);
+  }
+  
   /**
    * Assemble the internal assembly code to machine instruction words.
+   * @param mp Where to send warning messages.
    * @return Array of instruction words.
    * @throws InvalidInstructionException 
    */
-  public int[] assemble() throws InvalidInstructionException{
+  public int[] assemble(MessagePasser mp) throws InvalidInstructionException, Exception{
     int[] ret;
     this.labels = new HashMap<>();
     this.instructions = new ArrayList<>();
     this.currentInstruction = 0;
-
+    
     // Match an instruction, or a label followed by an instruction
     Pattern labelAndOrInstruction = Pattern.compile(
                       "^\\s*(([A-Za-z0-9_]+):\\s*)?"
-                    + "([a-z]{1,4})\\s+(\\$[0-3]|[A-Za-z0-9_-]+)\\s*"
-                    + "(,\\s*(\\$[0-3]|[A-Za-z0-9_-]+))?\\s*(,\\s*(\\$[0-3]|[A-Za-z0-9_-]+))?$");
+                    + "([a-z]{1,4})\\s+(\\$[0-9]|[A-Za-z0-9_-]+)\\s*"
+                    + "(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?\\s*(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?$");
     // Match just a label.
     Pattern labelOnly = Pattern.compile("^(([A-Za-z0-9_-]+):\\s*)");
     Matcher m1, m2;
-    
+    boolean error = false;
     for(int i = 0; i < sourceLines.length; i++){
       m1 = labelAndOrInstruction.matcher(sourceLines[i]);
       m2 = labelOnly.matcher(sourceLines[i]);
@@ -221,12 +262,25 @@ public class Assembler {
         if(m1.group(2) != null) { // if contains label
           getLabel(m1.group(2), i+1, currentInstruction, true);
         }
-        this.addInstruction(m1.group(3), m1.group(4), m1.group(6), m1.group(8));
+        try {
+          this.addInstruction(m1.group(3), m1.group(4), m1.group(6), m1.group(8));
+        } catch(Exception e) {
+          if(mp != null){
+            mp.sendMessage("Error at line "+(i+1)+":\n "+e.getMessage());
+            error = true;
+          }
+        }
       } else if(m2.matches()) {
         getLabel(m2.group(2), i+1, currentInstruction, true);
       } else {
+        if(mp!=null){
+          mp.sendMessage("Can't parse line "+(i+1)+", ignoring...\n");
+        }
         continue;
       }
+    }
+    if(error){
+      throw new Exception("One or more instructions were malformed.");
     }
     ret = new int[currentInstruction];
     int i = 0;
@@ -242,7 +296,7 @@ public class Assembler {
       for(int word : a.assemble())
         System.out.println(String.format("%1$04x", (short)word));
     }
-    catch(InvalidInstructionException e){
+    catch(Exception e){
       System.out.println("Error: "+e.getMessage());
     }
   }

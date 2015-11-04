@@ -50,11 +50,18 @@ public class MainFrame extends javax.swing.JFrame {
       Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+  private class MPImpl implements MessagePasser {
+    @Override
+    public void sendMessage(String msg) {
+      tabPane.setSelectedIndex(1);
+      errorTextArea.append(msg);
+    }
+  }
   private void assemble() {
+    errorTextArea.setText("");
     Assembler as = new Assembler(assemblyTextArea.getText());
     try {
-      int[] assembledWords = as.assemble();
+      int[] assembledWords = as.assemble(new MPImpl());
       int i = 0;
       machineCode.setText("memory_initialization_radix=16;\nmemory_initialization_vector=");
       for(int word : assembledWords) {
@@ -65,9 +72,9 @@ public class MainFrame extends javax.swing.JFrame {
           machineCode.append(";\n");
         }
       }
-    } catch (InvalidInstructionException ex) {
+    } catch (Exception ex) {
       tabPane.setSelectedIndex(1);
-      errorTextArea.setText("Couldn't assemble code:\n " + ex.getMessage() + "\n");
+      errorTextArea.append("Couldn't assemble code:\n " + ex.getMessage() + "\n");
     }
   }
 
@@ -250,7 +257,7 @@ public class MainFrame extends javax.swing.JFrame {
         .addContainerGap())
     );
 
-    tabPane.addTab("Errors", jPanel4);
+    tabPane.addTab("Warnings/Errors", jPanel4);
 
     getContentPane().add(tabPane);
 
