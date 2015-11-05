@@ -64,6 +64,8 @@ public class SimulatorPanel extends javax.swing.JPanel {
       } catch(InterruptedException e) {
         
       }
+      runButton.setText("Run");
+      runButton.setSelected(false);
     }
   }
   
@@ -75,7 +77,13 @@ public class SimulatorPanel extends javax.swing.JPanel {
       cpuRunner = new CPURunner();
       cpuThread = new Thread(cpuRunner);
       cpuThread.start();
+      runButton.setText("Pause");
+      runButton.setSelected(true);
     }
+  }
+  
+  private void stop() {
+    cpuThread.interrupt();
   }
   
   /**
@@ -203,9 +211,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     r1TextField = new javax.swing.JTextField();
     r2TextField = new javax.swing.JTextField();
     r3TextField = new javax.swing.JTextField();
-    runButton = new javax.swing.JButton();
     runSpeedSlider = new javax.swing.JSlider();
     jLabel6 = new javax.swing.JLabel();
+    runButton = new javax.swing.JToggleButton();
 
     setLayout(new java.awt.GridBagLayout());
 
@@ -239,7 +247,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-    gridBagConstraints.weightx = 0.1;
+    gridBagConstraints.weightx = 0.15;
     add(jScrollPane3, gridBagConstraints);
 
     stepButton.setText("Step");
@@ -347,18 +355,6 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
     add(r3TextField, gridBagConstraints);
 
-    runButton.setText("Run");
-    runButton.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        runButtonActionPerformed(evt);
-      }
-    });
-    gridBagConstraints = new java.awt.GridBagConstraints();
-    gridBagConstraints.gridx = 2;
-    gridBagConstraints.gridy = 7;
-    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-    add(runButton, gridBagConstraints);
-
     runSpeedSlider.setMaximum(950);
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 2;
@@ -373,6 +369,19 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridy = 5;
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     add(jLabel6, gridBagConstraints);
+
+    runButton.setText("Run");
+    runButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        runButtonActionPerformed(evt);
+      }
+    });
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 2;
+    gridBagConstraints.gridy = 7;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+    gridBagConstraints.weightx = 0.2;
+    add(runButton, gridBagConstraints);
   }// </editor-fold>//GEN-END:initComponents
 
   private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -384,7 +393,10 @@ public class SimulatorPanel extends javax.swing.JPanel {
   }//GEN-LAST:event_stepButtonActionPerformed
 
   private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-    this.run();
+    if(runButton.isSelected())
+      this.run();
+    else
+      this.stop();
   }//GEN-LAST:event_runButtonActionPerformed
 
 
@@ -405,7 +417,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private javax.swing.JTextField r2TextField;
   private javax.swing.JTextField r3TextField;
   private javax.swing.JButton resetButton;
-  private javax.swing.JButton runButton;
+  private javax.swing.JToggleButton runButton;
   private javax.swing.JSlider runSpeedSlider;
   private javax.swing.JButton stepButton;
   // End of variables declaration//GEN-END:variables
