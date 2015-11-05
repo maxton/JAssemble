@@ -37,7 +37,6 @@ public class MainFrame extends javax.swing.JFrame {
    */
   public MainFrame() {
     initComponents();
-    
   }
   
   private void openNewFile() {
@@ -103,7 +102,6 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         fileChooser = new javax.swing.JFileChooser();
-        jFrame1 = new javax.swing.JFrame();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         assemblyCodeLabel = new javax.swing.JLabel();
@@ -159,17 +157,6 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(0, 54, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
-        jFrame1.getContentPane().setLayout(jFrame1Layout);
-        jFrame1Layout.setHorizontalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        jFrame1Layout.setVerticalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JAssemble");
         setLocationByPlatform(true);
@@ -180,6 +167,7 @@ public class MainFrame extends javax.swing.JFrame {
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane1.setResizeWeight(0.5);
         jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setDoubleBuffered(true);
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
@@ -195,6 +183,9 @@ public class MainFrame extends javax.swing.JFrame {
         assemblyTextArea.setColumns(20);
         assemblyTextArea.setRows(5);
         jScrollPane3.setViewportView(assemblyTextArea);
+        tips4java.TextLineNumber lineNumbers = new tips4java.TextLineNumber(assemblyTextArea);
+        lineNumbers.setMinimumDisplayDigits(2);
+        jScrollPane3.setRowHeaderView(lineNumbers);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -384,7 +375,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea assemblyTextArea;
     private javax.swing.JTextArea errorTextArea;
     private javax.swing.JFileChooser fileChooser;
-    private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;

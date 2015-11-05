@@ -241,7 +241,7 @@ public class Assembler {
                     + "([a-z]{1,4})\\s+(\\$[0-9]|[A-Za-z0-9_-]+)\\s*"
                     + "(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?\\s*(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?$");
     // Match just a label.
-    Pattern labelOnly = Pattern.compile("^(([A-Za-z0-9_-]+):\\s*)");
+    Pattern labelOnly = Pattern.compile("^\\s*(([A-Za-z0-9_-]+):\\s*)");
     Matcher m1, m2;
     boolean error = false;
     for(int i = 0; i < sourceLines.length; i++){
@@ -270,12 +270,19 @@ public class Assembler {
         continue;
       }
     }
+    for(String key : labels.keySet()){
+      if(labels.get(key).fileLine == 0){
+        error = true;
+        mp.sendMessage("Error: jump to nonexistent label '"+key+"'\n");
+      }
+    }
     
     if(error){
       // We only kept going so that all syntax errors would be revealed.
       // So, we still need to error-out and quit the assembly process.
       throw new Exception("One or more instructions were malformed.");
     }
+    
     ret = new int[currentInstruction];
     int i = 0;
     for(Instruction ins : instructions){
