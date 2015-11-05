@@ -55,12 +55,12 @@ public class InstructionTest {
   @Test
   public void testJumpInstructionToHexCode() {
     System.out.println("JumpInstruction toHexCode (2 tests)");
-    JumpInstruction instance = new JumpInstruction(Instruction.Opcode.BEQ, 0, 0, new Label(0, 0), 3);
+    JumpInstruction instance = new JumpInstruction(Instruction.Opcode.BEQ, 0, 0, new Label(0, 0, "unk_label"), 3);
     String expResult = "b0fd";
     String result = instance.toHexCode();
     assertEquals(expResult, result);
     
-    instance = new JumpInstruction(Instruction.Opcode.BNE, 0, 1, new Label(0,6), 0);
+    instance = new JumpInstruction(Instruction.Opcode.BNE, 0, 1, new Label(0,6, "unk_label"), 0);
     expResult = "c106";
     result = instance.toHexCode();
     assertEquals(expResult, result);

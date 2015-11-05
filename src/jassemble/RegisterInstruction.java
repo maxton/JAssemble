@@ -40,6 +40,26 @@ public class RegisterInstruction extends Instruction {
     this.rd = (byte)rd;
   }
   
+  /**
+   * Get the destination register.
+   * @return the destination register.
+   */
+  public byte getRd(){
+    return this.rd;
+  }
+  
+  @Override
+  public String toString() {
+    switch(op){
+      case INV:
+        return op.toString().toLowerCase() + " $" + rd + ", $"+rs;
+      case CLR:
+        return op.toString().toLowerCase() + " $" + rd;
+      default:
+        return op.toString().toLowerCase() + " $" + rd + ", $"+rs+ ", $"+rt;
+    }
+  }
+  
   @Override
   public Type getType() {
     return Type.R;

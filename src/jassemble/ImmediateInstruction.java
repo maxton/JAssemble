@@ -38,6 +38,15 @@ public class ImmediateInstruction extends Instruction {
     this.imm = (byte)imm;
   }
   
+  public byte getImm(){
+    return this.imm;
+  }
+  
+  @Override
+  public String toString(){
+    return op.toString().toLowerCase() + " $" + rs + ", $"+rt+", "+imm;
+  }
+  
   @Override
   public Type getType() {
     return Type.I;

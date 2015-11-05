@@ -41,6 +41,15 @@ public class JumpInstruction extends Instruction {
     this.instructionNum = instructionNum;
   }
   
+  public short getTarget(){
+    return (short)(this.target.instructionNum - this.instructionNum);
+  }
+  
+  @Override
+  public String toString() {
+    return op.toString().toLowerCase() + " $" + rs + ", $"+rt+", "+getTarget();
+  }
+  
   @Override
   public int toWord() {
     return (this.op.ordinal() << 12)

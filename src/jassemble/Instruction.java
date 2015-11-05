@@ -76,27 +76,28 @@ public abstract class Instruction {
     word &= 0xFFFF;
     int op = (word & 0xF000) >> 12;
     int rs = (word & 0x0C00) >> 10;
-    int rt = (word & 0x0400) >> 8;
+    int rt = (word & 0x0300) >> 8;
     int rd = (word & 0x00C0) >> 6;
     byte imm = (byte)(word & 0x00FF);
     switch(op){
-      case 0:
-      case 1:
-      case 3:
-      case 6:
-      case 8:
-      case 9:
-      case 10:
+      case 0x0: //lw
+      case 0x1: //sw
+      case 0x3: //addi
+      case 0x6: //andi
+      case 0x8: //ori
+      case 0x9: //sra
+      case 0xA: //sll
         return new ImmediateInstruction(Opcode.values()[op], rs, rt, imm);
-      case 2:
-      case 4:
-      case 5:
-      case 7:
-      case 13:
+      case 0x2: 
+      case 0x4:
+      case 0x5:
+      case 0x7:
+      case 0xD:
         return new RegisterInstruction(Opcode.values()[op],rd, rs, rt);
-      case 11:
-      case 12:
-        return new JumpInstruction(Opcode.values()[op], rs, rt, new Label(0, imm+instructionNum), instructionNum);
+      case 0xB:
+      case 0xC:
+        return new JumpInstruction(Opcode.values()[op], rs, rt, 
+                new Label(0, imm+instructionNum, "unk_"+(imm+instructionNum)), instructionNum);
       default:
         throw new InvalidInstructionException(""+op);
     }

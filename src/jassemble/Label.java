@@ -32,11 +32,16 @@ class Label {
   public int instructionNum;
   
   /**
+   * The name of this label.
+   */
+  public String name;
+  
+  /**
    * Instantiate a label at the given source line # and instruction number.
    * @param fileLine
    * @param instructionNum 
    */
-  public Label(int fileLine, int instructionNum) {
+  public Label(int fileLine, int instructionNum, String name) {
     this.fileLine = fileLine;
     this.instructionNum = instructionNum;
   }

@@ -30,7 +30,6 @@ import javax.swing.JFileChooser;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-  
   private File currentFile;
   /**
    * Creates new form MainFrame
@@ -63,7 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
   private class MPImpl implements MessagePasser {
     @Override
     public void sendMessage(String msg) {
-      tabPane.setSelectedIndex(1);
+      outputTabPane.setSelectedIndex(1);
       errorTextArea.append(msg);
     }
   }
@@ -71,11 +70,12 @@ public class MainFrame extends javax.swing.JFrame {
     errorTextArea.setText("");
     Assembler as = new Assembler(assemblyTextArea.getText());
     try {
-      int[] assembledWords = as.assemble(new MPImpl());
+      as.assemble(new MPImpl());
+      short[] assembledWords = as.getInstructionWords();
       int i = 0;
       machineCode.setText("memory_initialization_radix=16;\nmemory_initialization_vector=");
-      for(int word : assembledWords) {
-        machineCode.append(String.format("%1$04x", (short)word));
+      for(short word : assembledWords) {
+        machineCode.append(String.format("%1$04x", word));
         if(++i < assembledWords.length){
           machineCode.append(",");
         } else {
@@ -83,9 +83,25 @@ public class MainFrame extends javax.swing.JFrame {
         }
       }
     } catch (Exception ex) {
-      tabPane.setSelectedIndex(1);
+      outputTabPane.setSelectedIndex(1);
       errorTextArea.append("Couldn't assemble code:\n " + ex.getMessage() + "\n");
     }
+  }
+  
+  private void simulate() {
+    errorTextArea.setText("");
+    Assembler as = new Assembler(assemblyTextArea.getText());
+    try {
+      as.assemble(new MPImpl());
+    } catch (Exception ex) {
+      mainTabPane.setSelectedIndex(0);
+      outputTabPane.setSelectedIndex(1);
+      errorTextArea.append("Couldn't assemble code:\n " + ex.getMessage() + "\n");
+      return;
+    }
+    this.sim.removeAll();
+    this.sim.add(new SimulatorPanel(as)).setVisible(true);
+    mainTabPane.setSelectedIndex(1);
   }
 
   /**
@@ -102,19 +118,22 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2 = new javax.swing.JLabel();
     jLabel5 = new javax.swing.JLabel();
     fileChooser = new javax.swing.JFileChooser();
+    mainTabPane = new javax.swing.JTabbedPane();
     jSplitPane1 = new javax.swing.JSplitPane();
-    jPanel2 = new javax.swing.JPanel();
+    editorPanel = new javax.swing.JPanel();
     assemblyCodeLabel = new javax.swing.JLabel();
     jScrollPane3 = new javax.swing.JScrollPane();
     assemblyTextArea = new javax.swing.JTextArea();
     assembleButton = new javax.swing.JButton();
-    tabPane = new javax.swing.JTabbedPane();
+    simulateButton = new javax.swing.JButton();
+    outputTabPane = new javax.swing.JTabbedPane();
     jPanel3 = new javax.swing.JPanel();
     jScrollPane2 = new javax.swing.JScrollPane();
     machineCode = new javax.swing.JTextArea();
     jPanel4 = new javax.swing.JPanel();
     jScrollPane1 = new javax.swing.JScrollPane();
     errorTextArea = new javax.swing.JTextArea();
+    sim = new javax.swing.JPanel();
     jMenuBar1 = new javax.swing.JMenuBar();
     jMenu1 = new javax.swing.JMenu();
     openFileMenuItem = new javax.swing.JMenuItem();
@@ -162,6 +181,7 @@ public class MainFrame extends javax.swing.JFrame {
     setLocationByPlatform(true);
     setMinimumSize(new java.awt.Dimension(500, 500));
     setPreferredSize(new java.awt.Dimension(520, 540));
+    getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
     jSplitPane1.setDividerLocation(300);
     jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -169,16 +189,17 @@ public class MainFrame extends javax.swing.JFrame {
     jSplitPane1.setContinuousLayout(true);
     jSplitPane1.setDoubleBuffered(true);
 
-    jPanel2.setLayout(new java.awt.GridBagLayout());
+    editorPanel.setLayout(new java.awt.GridBagLayout());
 
     assemblyCodeLabel.setText("Assembly Code:");
     assemblyCodeLabel.setAlignmentY(0.0F);
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 0;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
     gridBagConstraints.insets = new java.awt.Insets(0, 13, 0, 3);
-    jPanel2.add(assemblyCodeLabel, gridBagConstraints);
+    editorPanel.add(assemblyCodeLabel, gridBagConstraints);
 
     assemblyTextArea.setColumns(20);
     assemblyTextArea.setRows(5);
@@ -190,12 +211,13 @@ public class MainFrame extends javax.swing.JFrame {
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
     gridBagConstraints.weightx = 1.0;
     gridBagConstraints.weighty = 1.0;
     gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 12);
-    jPanel2.add(jScrollPane3, gridBagConstraints);
+    editorPanel.add(jScrollPane3, gridBagConstraints);
 
     assembleButton.setText("Assemble!");
     assembleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -206,11 +228,24 @@ public class MainFrame extends javax.swing.JFrame {
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 2;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+    gridBagConstraints.weightx = 0.5;
     gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-    jPanel2.add(assembleButton, gridBagConstraints);
+    editorPanel.add(assembleButton, gridBagConstraints);
 
-    jSplitPane1.setLeftComponent(jPanel2);
+    simulateButton.setText("Simulate!");
+    simulateButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        simulateButtonActionPerformed(evt);
+      }
+    });
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 1;
+    gridBagConstraints.gridy = 2;
+    gridBagConstraints.weightx = 0.5;
+    gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+    editorPanel.add(simulateButton, gridBagConstraints);
+
+    jSplitPane1.setLeftComponent(editorPanel);
 
     jScrollPane2.setMaximumSize(new java.awt.Dimension(32767, 180));
     jScrollPane2.setMinimumSize(new java.awt.Dimension(2, 2));
@@ -227,18 +262,18 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
         .addContainerGap())
     );
 
-    tabPane.addTab("Machine Code", jPanel3);
+    outputTabPane.addTab("Machine Code", jPanel3);
 
     errorTextArea.setEditable(false);
     errorTextArea.setColumns(20);
@@ -251,22 +286,27 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
         .addContainerGap())
     );
 
-    tabPane.addTab("Warnings/Errors", jPanel4);
+    outputTabPane.addTab("Warnings/Errors", jPanel4);
 
-    jSplitPane1.setRightComponent(tabPane);
+    jSplitPane1.setRightComponent(outputTabPane);
 
-    getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+    mainTabPane.addTab("Edit", jSplitPane1);
+
+    sim.setLayout(new javax.swing.BoxLayout(sim, javax.swing.BoxLayout.LINE_AXIS));
+    mainTabPane.addTab("Simulate", sim);
+
+    getContentPane().add(mainTabPane);
 
     jMenu1.setText("File");
 
@@ -338,6 +378,10 @@ public class MainFrame extends javax.swing.JFrame {
     this.saveFile();
   }//GEN-LAST:event_saveAssemblyMenuItemActionPerformed
 
+  private void simulateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simulateButtonActionPerformed
+    this.simulate();
+  }//GEN-LAST:event_simulateButtonActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -373,6 +417,7 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JButton assembleButton;
   private javax.swing.JLabel assemblyCodeLabel;
   private javax.swing.JTextArea assemblyTextArea;
+  private javax.swing.JPanel editorPanel;
   private javax.swing.JTextArea errorTextArea;
   private javax.swing.JFileChooser fileChooser;
   private javax.swing.JLabel jLabel1;
@@ -381,7 +426,6 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
   private javax.swing.JMenuBar jMenuBar1;
-  private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
   private javax.swing.JScrollPane jScrollPane1;
@@ -389,9 +433,12 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JTextArea machineCode;
+  private javax.swing.JTabbedPane mainTabPane;
   private javax.swing.JMenuItem openFileMenuItem;
+  private javax.swing.JTabbedPane outputTabPane;
   private javax.swing.JMenuItem saveAssemblyAsMenuItem;
   private javax.swing.JMenuItem saveAssemblyMenuItem;
-  private javax.swing.JTabbedPane tabPane;
+  private javax.swing.JPanel sim;
+  private javax.swing.JButton simulateButton;
   // End of variables declaration//GEN-END:variables
 }

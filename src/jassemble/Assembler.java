@@ -33,6 +33,7 @@ public class Assembler {
   private Map<String,Label> labels;
   private final String[] sourceLines;
   private int currentInstruction;
+  private short[] instructionWords;
   
   /**
    * Instantiate an assembler with the given source code.
@@ -54,7 +55,7 @@ public class Assembler {
    */
   private Label getLabel(String name, int lineNum, int instructionNum, boolean update){
     if(!labels.containsKey(name)){
-      labels.put(name, new Label(lineNum,instructionNum));
+      labels.put(name, new Label(lineNum,instructionNum, name));
     } 
     Label ret = labels.get(name);
     if(update){
@@ -214,23 +215,20 @@ public class Assembler {
   
   /**
    * Assemble the internal assembly code to machine instruction words.
-   * @return Array of instruction words.
    * @throws InvalidInstructionException
    * @throws Exception 
    */
-  public int[] assemble() throws InvalidInstructionException, Exception {
-    return assemble(null);
+  public void assemble() throws InvalidInstructionException, Exception {
+    assemble(null);
   }
   
   /**
    * Assemble the internal assembly code to machine instruction words.
    * @param mp Where to send warning messages.
-   * @return Array of instruction words.
    * @throws InvalidInstructionException 
    * @throws Exception
    */
-  public int[] assemble(MessagePasser mp) throws InvalidInstructionException, Exception{
-    int[] ret;
+  public void assemble(MessagePasser mp) throws InvalidInstructionException, Exception{
     this.labels = new HashMap<>();
     this.instructions = new ArrayList<>();
     this.currentInstruction = 0;
@@ -239,16 +237,37 @@ public class Assembler {
     Pattern labelAndOrInstruction = Pattern.compile(
                       "^\\s*(([A-Za-z0-9_]+):\\s*)?"
                     + "([a-z]{1,4})\\s+(\\$[0-9]|[A-Za-z0-9_-]+)\\s*"
-                    + "(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?\\s*(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?$");
+                    + "(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?\\s*(,\\s*(\\$[0-9]|[A-Za-z0-9_-]+))?.*");
+    Pattern labelAndOrLoadStore = Pattern.compile(
+            "^\\s*(([A-Za-z0-9_]+):\\s*)?" //label
+                    + "([a-z]{1,4})\\s+" // instruction
+                    + "(\\$[0-9]),\\s*" // rd
+                    + "([-0-9]+)\\s*\\((\\$[0-9])\\).*"); //offset(rs)
     // Match just a label.
     Pattern labelOnly = Pattern.compile("^\\s*(([A-Za-z0-9_-]+):\\s*)");
-    Matcher m1, m2;
+    Matcher m1, m2, m3;
     boolean error = false;
     for(int i = 0; i < sourceLines.length; i++){
       m1 = labelAndOrInstruction.matcher(sourceLines[i]);
       m2 = labelOnly.matcher(sourceLines[i]);
+      m3 = labelAndOrLoadStore.matcher(sourceLines[i]);
       if(sourceLines[i].equals("") || sourceLines[i].matches("\\s+")) {
         continue;
+      } else if(m3.matches()) {
+        if(m3.group(2) != null) { // if contains label
+          getLabel(m3.group(2), i+1, currentInstruction, true);
+        }
+        try {
+          //                            instr, base, data, offset
+          this.addInstruction(m3.group(3), m3.group(6), m3.group(4), m3.group(5));
+        } catch(Exception e) {
+          if(mp != null){
+            mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage()+"\n");
+            error = true;
+          }
+        }
+      } else if(m2.matches()) {
+        getLabel(m2.group(2), i+1, currentInstruction, true);
       } else if(m1.matches()) {
         if(m1.group(2) != null) { // if contains label
           getLabel(m1.group(2), i+1, currentInstruction, true);
@@ -261,8 +280,6 @@ public class Assembler {
             error = true;
           }
         }
-      } else if(m2.matches()) {
-        getLabel(m2.group(2), i+1, currentInstruction, true);
       } else {
         if(mp!=null){
           mp.sendMessage("Warning: Can't understand line "+(i+1)+", ignoring entire line...\n");
@@ -283,12 +300,19 @@ public class Assembler {
       throw new Exception("One or more instructions were malformed.");
     }
     
-    ret = new int[currentInstruction];
+    instructionWords = new short[currentInstruction];
     int i = 0;
     for(Instruction ins : instructions){
-      ret[i++] = ins.toWord();
+      instructionWords[i++] = (short)ins.toWord();
     }
-    return ret;
+  }
+  
+  public Instruction[] getInstructions(){
+    return this.instructions.toArray(new Instruction[instructions.size()]);
+  }
+  
+  public short[] getInstructionWords(){
+    return this.instructionWords.clone();
   }
   
   /**
@@ -296,10 +320,11 @@ public class Assembler {
    * @param args 
    */
   public static void main(String[] args){
-    Assembler a = new Assembler("main: add $0, $0, $1\nadd $0, $1, $2\nj main\nlabel:");
+    Assembler a = new Assembler("main: lw $1, 0($2)\nlw $3, 2($1)\nj main\nlabel:");
     try {
-      for(int word : a.assemble())
-        System.out.println(String.format("%1$04x", (short)word));
+      a.assemble();
+      for(short word : a.getInstructionWords())
+        System.out.println(String.format("%1$04x", word));
     }
     catch(Exception e){
       System.out.println("Error: "+e.getMessage());
