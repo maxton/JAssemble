@@ -70,4 +70,4 @@ Couldn't assemble code:
 ## Usage
 JAssembler is mainly a GUI application. Simply type in or load a piece of
 assembly code and press "Assemble!".
-![Running the Assembler](https://i.imgur.com/uvT97nx.png)
+![Running the Assembler](https://i.imgur.com/wuUej0g.png)
