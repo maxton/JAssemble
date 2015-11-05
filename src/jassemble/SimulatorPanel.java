@@ -22,7 +22,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * GUI for simulating the CPU.
  * @author Max
  */
 public class SimulatorPanel extends javax.swing.JPanel {
@@ -30,6 +30,8 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private short[] instructionWords;
   private byte[] data;
   private CPU cpu;
+  Thread cpuThread;
+  CPURunner cpuRunner;
   
   /**
    * Creates new form SimulatorPanel
@@ -37,6 +39,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
    */
   public SimulatorPanel(Assembler as) {
     initComponents();
+    this.instructionTable.getColumnModel().getColumn(0).setMaxWidth(48);
     this.instructions = as.getInstructions();
     this.instructionWords = as.getInstructionWords();
     this.data = new byte[256];
@@ -44,39 +47,74 @@ public class SimulatorPanel extends javax.swing.JPanel {
     this.instructionTable.getSelectionModel().setSelectionInterval(0, 0);
   }
   
-  private void step() {
+  /**
+   * Worker thread for stepping the CPU automatically.
+   */
+  private class CPURunner implements Runnable {
+    
+    /**
+     * Steps the CPU until it can't.
+     */
+    @Override
+    public void run() {
+      try {
+        while(step()){
+          Thread.sleep(1000 - runSpeedSlider.getValue());
+        }
+      } catch(InterruptedException e) {
+        
+      }
+    }
+  }
+  
+  /**
+   * Automatically steps through all instructions.
+   */
+  private void run() {
+    if(cpuThread == null || !cpuThread.isAlive()){
+      cpuRunner = new CPURunner();
+      cpuThread = new Thread(cpuRunner);
+      cpuThread.start();
+    }
+  }
+  
+  /**
+   * Step through a single CPU instruction.
+   * @return Did the instruction execute correctly?
+   */
+  private boolean step() {
     try {
       cpu.step();
     } catch (InvalidInstructionException ex) {
-      
+      return false;
     } catch (CPU.EndOfCodeException ex) {
-      
+      return false;
     }
-    checkPC();
-    updateRegs(cpu.getRegister(0),
-               cpu.getRegister(1),
-               cpu.getRegister(2),
-               cpu.getRegister(3));
-    this.dataTable.repaint();
+    refreshGui();
+    return true;
   }
   
+  /**
+   * Reset the CPU and simulator GUI.
+   */
   private void reset() {
     cpu.reset();
-    checkPC();
-    updateRegs((byte)0, (byte)0, (byte)0, (byte)0);
-    this.dataTable.repaint();
+    refreshGui();
   }
   
-  private void checkPC(){
+  /**
+   * Update all GUI elements with current CPU state.
+   */
+  private void refreshGui(){
     instructionTable.getSelectionModel().setSelectionInterval(cpu.getPC(), cpu.getPC());
     pcTextField.setText(String.valueOf(cpu.getPC()));
+    r0TextField.setText(String.valueOf(cpu.getRegister(0)));
+    r1TextField.setText(String.valueOf(cpu.getRegister(1)));
+    r2TextField.setText(String.valueOf(cpu.getRegister(2)));
+    r3TextField.setText(String.valueOf(cpu.getRegister(3)));
+    dataTable.repaint();
   }
-  private void updateRegs(byte r0, byte r1, byte r2, byte r3){
-    r0TextField.setText(String.valueOf(r0));
-    r1TextField.setText(String.valueOf(r1));
-    r2TextField.setText(String.valueOf(r2));
-    r3TextField.setText(String.valueOf(r3));
-  }
+  
   private class DataTableModel
           extends AbstractTableModel {
     public DataTableModel() {
@@ -165,6 +203,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     r1TextField = new javax.swing.JTextField();
     r2TextField = new javax.swing.JTextField();
     r3TextField = new javax.swing.JTextField();
+    runButton = new javax.swing.JButton();
+    runSpeedSlider = new javax.swing.JSlider();
+    jLabel6 = new javax.swing.JLabel();
 
     setLayout(new java.awt.GridBagLayout());
 
@@ -182,7 +223,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-    gridBagConstraints.weightx = 0.5;
+    gridBagConstraints.weightx = 0.4;
     add(jScrollPane2, gridBagConstraints);
 
     jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -197,6 +238,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridy = 0;
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
     gridBagConstraints.weightx = 0.1;
     add(jScrollPane3, gridBagConstraints);
 
@@ -208,9 +250,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     });
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 2;
-    gridBagConstraints.gridy = 5;
+    gridBagConstraints.gridy = 8;
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-    gridBagConstraints.weightx = 0.1;
+    gridBagConstraints.weightx = 0.2;
     gridBagConstraints.weighty = 0.3;
     add(stepButton, gridBagConstraints);
 
@@ -222,10 +264,10 @@ public class SimulatorPanel extends javax.swing.JPanel {
     });
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 2;
-    gridBagConstraints.gridy = 6;
+    gridBagConstraints.gridy = 9;
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
-    gridBagConstraints.weightx = 0.1;
+    gridBagConstraints.weightx = 0.2;
     gridBagConstraints.weighty = 0.2;
     add(resetButton, gridBagConstraints);
 
@@ -304,6 +346,33 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridy = 4;
     gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
     add(r3TextField, gridBagConstraints);
+
+    runButton.setText("Run");
+    runButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        runButtonActionPerformed(evt);
+      }
+    });
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 2;
+    gridBagConstraints.gridy = 7;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+    add(runButton, gridBagConstraints);
+
+    runSpeedSlider.setMaximum(950);
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 2;
+    gridBagConstraints.gridy = 6;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+    add(runSpeedSlider, gridBagConstraints);
+
+    jLabel6.setText("Run Speed (1Hz - 20Hz)");
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 2;
+    gridBagConstraints.gridy = 5;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+    add(jLabel6, gridBagConstraints);
   }// </editor-fold>//GEN-END:initComponents
 
   private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -314,6 +383,10 @@ public class SimulatorPanel extends javax.swing.JPanel {
     this.step();
   }//GEN-LAST:event_stepButtonActionPerformed
 
+  private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+    this.run();
+  }//GEN-LAST:event_runButtonActionPerformed
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JTable dataTable;
@@ -323,6 +396,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
+  private javax.swing.JLabel jLabel6;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JTextField pcTextField;
@@ -331,6 +405,8 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private javax.swing.JTextField r2TextField;
   private javax.swing.JTextField r3TextField;
   private javax.swing.JButton resetButton;
+  private javax.swing.JButton runButton;
+  private javax.swing.JSlider runSpeedSlider;
   private javax.swing.JButton stepButton;
   // End of variables declaration//GEN-END:variables
 }

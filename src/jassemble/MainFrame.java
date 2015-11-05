@@ -155,7 +155,7 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2.setText("©2015 Maxton Connor");
 
     jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel5.setText("Version 0.6");
+    jLabel5.setText("Version 0.7");
 
     javax.swing.GroupLayout AboutPopupLayout = new javax.swing.GroupLayout(AboutPopup.getContentPane());
     AboutPopup.getContentPane().setLayout(AboutPopupLayout);
@@ -179,7 +179,7 @@ public class MainFrame extends javax.swing.JFrame {
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("JAssemble");
     setLocationByPlatform(true);
-    setMinimumSize(new java.awt.Dimension(500, 500));
+    setMinimumSize(new java.awt.Dimension(520, 540));
     setPreferredSize(new java.awt.Dimension(520, 540));
     getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
@@ -262,7 +262,7 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
@@ -286,7 +286,7 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel4Layout.setVerticalGroup(

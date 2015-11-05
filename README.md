@@ -71,5 +71,7 @@ Couldn't assemble code:
 
 ## Usage
 JAssembler is mainly a GUI application. Simply type in or load a piece of
-assembly code and press "Assemble!".
-![Running the Assembler](https://i.imgur.com/wuUej0g.png)
+assembly code and press "Assemble!" to assemble the code to machine code,
+or press "Simulate!" to test your program in the built-in simulator.
+![Running the Assembler](https://i.imgur.com/rz3tYrV.png)
+![Running the Simulator](https://i.imgur.com/BNj7wUL.png)
