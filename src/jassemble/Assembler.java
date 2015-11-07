@@ -242,7 +242,7 @@ public class Assembler {
             "^\\s*(([A-Za-z0-9_]+):\\s*)?" //label
                     + "([a-z]{1,4})\\s+" // instruction
                     + "(\\$[0-9]),\\s*" // rd
-                    + "([-0-9]+)\\s*\\((\\$[0-9])\\).*"); //offset(rs)
+                    + "([-x0-9]+)\\s*\\((\\$[0-9])\\).*"); //offset(rs)
     // Match just a label.
     Pattern labelOnly = Pattern.compile("^\\s*(([A-Za-z0-9_-]+):\\s*)");
     Matcher m1, m2, m3;
