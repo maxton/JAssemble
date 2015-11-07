@@ -220,6 +220,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
+    instructionTable.setFont(new java.awt.Font("Courier New", 0, 12)); // NOI18N
     instructionTable.setModel(new InstructionTableModel());
     instructionTable.setEnabled(false);
     instructionTable.setShowHorizontalLines(false);
@@ -230,8 +231,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridy = 0;
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-    gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+    gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
     gridBagConstraints.weightx = 0.4;
+    gridBagConstraints.weighty = 1.0;
     add(jScrollPane2, gridBagConstraints);
 
     jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -248,6 +250,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
     gridBagConstraints.weightx = 0.15;
+    gridBagConstraints.weighty = 1.0;
     add(jScrollPane3, gridBagConstraints);
 
     stepButton.setText("Step");
@@ -261,7 +264,6 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridy = 8;
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.weightx = 0.2;
-    gridBagConstraints.weighty = 0.3;
     add(stepButton, gridBagConstraints);
 
     resetButton.setText("Reset");
@@ -274,9 +276,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridx = 2;
     gridBagConstraints.gridy = 9;
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-    gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.weightx = 0.2;
-    gridBagConstraints.weighty = 0.2;
     add(resetButton, gridBagConstraints);
 
     jLabel1.setText("PC");
@@ -356,6 +356,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     add(r3TextField, gridBagConstraints);
 
     runSpeedSlider.setMaximum(950);
+    runSpeedSlider.setValue(475);
     gridBagConstraints = new java.awt.GridBagConstraints();
     gridBagConstraints.gridx = 2;
     gridBagConstraints.gridy = 6;

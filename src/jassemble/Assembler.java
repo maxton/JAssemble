@@ -191,7 +191,7 @@ public class Assembler {
         or $rd, $rs, $rs
       */
       case "move":
-        ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg2));
+        ret = new RegisterInstruction(Opcode.OR, regToInt(arg2), regToInt(arg1), regToInt(arg1));
         break;
       /*
         li $rd, IMM

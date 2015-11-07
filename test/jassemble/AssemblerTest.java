@@ -308,7 +308,7 @@ public class AssemblerTest {
   @Test
   public void testAssembleMove() throws Exception {
     System.out.println("Assemble move pseudo-instruction");
-    Assembler instance = new Assembler("main: move $1, $2\nmove $3, $0");
+    Assembler instance = new Assembler("main: move $2, $1\nmove $0, $3");
     short[] expResult = {0x7A40, 0x70C0};
     instance.assemble();
     short[] result = instance.getInstructionWords();

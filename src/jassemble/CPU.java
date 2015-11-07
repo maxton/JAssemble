@@ -152,4 +152,19 @@ public class CPU {
         throw new InvalidInstructionException("Invalid instruction encountered ,PC: "+PC);
     }
   }
+  
+  /**
+   * Step the CPU (up to) num times.
+   * @param num How many steps to execute.
+   */
+  public void step(int num) {
+    try {
+      for(int i = 0; i < num; i++){
+        step();
+      }
+    }
+    catch(Exception e) {
+      
+    }
+  }
 }
