@@ -155,8 +155,9 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel5 = new javax.swing.JLabel();
     fileChooser = new javax.swing.JFileChooser();
     codePopup = new javax.swing.JPopupMenu();
-    undoMenuItem1 = new javax.swing.JMenuItem();
-    redoMenuItem1 = new javax.swing.JMenuItem();
+    ctxCutMenuItem = new javax.swing.JMenuItem();
+    ctxCopyMenuItem = new javax.swing.JMenuItem();
+    ctxPasteMenuItem = new javax.swing.JMenuItem();
     mainTabPane = new javax.swing.JTabbedPane();
     jSplitPane1 = new javax.swing.JSplitPane();
     editorPanel = new javax.swing.JPanel();
@@ -174,18 +175,19 @@ public class MainFrame extends javax.swing.JFrame {
     errorTextArea = new javax.swing.JTextArea();
     sim = new javax.swing.JPanel();
     jMenuBar1 = new javax.swing.JMenuBar();
-    jMenu1 = new javax.swing.JMenu();
+    fileMenu = new javax.swing.JMenu();
     openFileMenuItem = new javax.swing.JMenuItem();
     saveAssemblyMenuItem = new javax.swing.JMenuItem();
     saveAssemblyAsMenuItem = new javax.swing.JMenuItem();
-    jMenu3 = new javax.swing.JMenu();
+    editMenu = new javax.swing.JMenu();
     undoMenuItem = new javax.swing.JMenuItem();
     redoMenuItem = new javax.swing.JMenuItem();
     jSeparator1 = new javax.swing.JPopupMenu.Separator();
     cutMenuItem = new javax.swing.JMenuItem();
     copyMenuItem = new javax.swing.JMenuItem();
     pasteMenuItem = new javax.swing.JMenuItem();
-    jMenu2 = new javax.swing.JMenu();
+    helpMenu = new javax.swing.JMenu();
+    aboutMenuItem = new javax.swing.JMenuItem();
 
     AboutPopup.setTitle("About JAssemble");
     AboutPopup.setLocationByPlatform(true);
@@ -222,21 +224,29 @@ public class MainFrame extends javax.swing.JFrame {
         .addGap(0, 40, Short.MAX_VALUE))
     );
 
-    undoMenuItem1.setText("Undo");
-    undoMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+    ctxCutMenuItem.setText("Cut");
+    ctxCutMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        undoMenuItem1ActionPerformed(evt);
+        ctxCutMenuItemActionPerformed(evt);
       }
     });
-    codePopup.add(undoMenuItem1);
+    codePopup.add(ctxCutMenuItem);
 
-    redoMenuItem1.setText("Redo");
-    redoMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+    ctxCopyMenuItem.setText("Copy");
+    ctxCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        redoMenuItem1ActionPerformed(evt);
+        ctxCopyMenuItemActionPerformed(evt);
       }
     });
-    codePopup.add(redoMenuItem1);
+    codePopup.add(ctxCopyMenuItem);
+
+    ctxPasteMenuItem.setText("Paste");
+    ctxPasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ctxPasteMenuItemActionPerformed(evt);
+      }
+    });
+    codePopup.add(ctxPasteMenuItem);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("JAssemble");
@@ -379,7 +389,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     getContentPane().add(mainTabPane);
 
-    jMenu1.setText("File");
+    fileMenu.setText("File");
 
     openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
     openFileMenuItem.setText("Open...");
@@ -389,7 +399,7 @@ public class MainFrame extends javax.swing.JFrame {
         openFileMenuItemActionPerformed(evt);
       }
     });
-    jMenu1.add(openFileMenuItem);
+    fileMenu.add(openFileMenuItem);
 
     saveAssemblyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
     saveAssemblyMenuItem.setText("Save assembly");
@@ -399,7 +409,7 @@ public class MainFrame extends javax.swing.JFrame {
         saveAssemblyMenuItemActionPerformed(evt);
       }
     });
-    jMenu1.add(saveAssemblyMenuItem);
+    fileMenu.add(saveAssemblyMenuItem);
 
     saveAssemblyAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
     saveAssemblyAsMenuItem.setText("Save assembly as...");
@@ -408,11 +418,11 @@ public class MainFrame extends javax.swing.JFrame {
         saveAssemblyAsMenuItemActionPerformed(evt);
       }
     });
-    jMenu1.add(saveAssemblyAsMenuItem);
+    fileMenu.add(saveAssemblyAsMenuItem);
 
-    jMenuBar1.add(jMenu1);
+    jMenuBar1.add(fileMenu);
 
-    jMenu3.setText("Edit");
+    editMenu.setText("Edit");
 
     undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
     undoMenuItem.setText("Undo");
@@ -421,7 +431,7 @@ public class MainFrame extends javax.swing.JFrame {
         undoMenuItemActionPerformed(evt);
       }
     });
-    jMenu3.add(undoMenuItem);
+    editMenu.add(undoMenuItem);
 
     redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
     redoMenuItem.setText("Redo");
@@ -430,39 +440,54 @@ public class MainFrame extends javax.swing.JFrame {
         redoMenuItemActionPerformed(evt);
       }
     });
-    jMenu3.add(redoMenuItem);
-    jMenu3.add(jSeparator1);
+    editMenu.add(redoMenuItem);
+    editMenu.add(jSeparator1);
 
     cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
     cutMenuItem.setText("Cut");
-    jMenu3.add(cutMenuItem);
+    cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cutMenuItemActionPerformed(evt);
+      }
+    });
+    editMenu.add(cutMenuItem);
 
     copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
     copyMenuItem.setText("Copy");
-    jMenu3.add(copyMenuItem);
+    copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        copyMenuItemActionPerformed(evt);
+      }
+    });
+    editMenu.add(copyMenuItem);
 
     pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
     pasteMenuItem.setText("Paste");
-    jMenu3.add(pasteMenuItem);
-
-    jMenuBar1.add(jMenu3);
-
-    jMenu2.setText("About");
-    jMenu2.addMouseListener(new java.awt.event.MouseAdapter() {
-      public void mouseClicked(java.awt.event.MouseEvent evt) {
-        jMenu2MouseClicked(evt);
+    pasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        pasteMenuItemActionPerformed(evt);
       }
     });
-    jMenuBar1.add(jMenu2);
+    editMenu.add(pasteMenuItem);
+
+    jMenuBar1.add(editMenu);
+
+    helpMenu.setText("Help");
+
+    aboutMenuItem.setText("About");
+    aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        aboutMenuItemActionPerformed(evt);
+      }
+    });
+    helpMenu.add(aboutMenuItem);
+
+    jMenuBar1.add(helpMenu);
 
     setJMenuBar(jMenuBar1);
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
-
-  private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
-    this.AboutPopup.setVisible(true);
-  }//GEN-LAST:event_jMenu2MouseClicked
 
   private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
     this.openNewFile();
@@ -496,13 +521,33 @@ public class MainFrame extends javax.swing.JFrame {
     undoCode();
   }//GEN-LAST:event_undoMenuItemActionPerformed
 
-  private void undoMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoMenuItem1ActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_undoMenuItem1ActionPerformed
+  private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
+    assemblyTextArea.cut();
+  }//GEN-LAST:event_cutMenuItemActionPerformed
 
-  private void redoMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoMenuItem1ActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_redoMenuItem1ActionPerformed
+  private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
+    assemblyTextArea.copy();
+  }//GEN-LAST:event_copyMenuItemActionPerformed
+
+  private void pasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteMenuItemActionPerformed
+    assemblyTextArea.paste();
+  }//GEN-LAST:event_pasteMenuItemActionPerformed
+
+  private void ctxCopyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxCopyMenuItemActionPerformed
+    assemblyTextArea.copy();
+  }//GEN-LAST:event_ctxCopyMenuItemActionPerformed
+
+  private void ctxPasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxPasteMenuItemActionPerformed
+    assemblyTextArea.paste();
+  }//GEN-LAST:event_ctxPasteMenuItemActionPerformed
+
+  private void ctxCutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctxCutMenuItemActionPerformed
+    assemblyTextArea.cut();
+  }//GEN-LAST:event_ctxCutMenuItemActionPerformed
+
+  private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+    this.AboutPopup.setVisible(true);
+  }//GEN-LAST:event_aboutMenuItemActionPerformed
 
   private void undoCode(){
     try {
@@ -552,21 +597,25 @@ public class MainFrame extends javax.swing.JFrame {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JDialog AboutPopup;
+  private javax.swing.JMenuItem aboutMenuItem;
   private javax.swing.JButton assembleButton;
   private javax.swing.JLabel assemblyCodeLabel;
   private javax.swing.JTextArea assemblyTextArea;
   private javax.swing.JPopupMenu codePopup;
   private javax.swing.JMenuItem copyMenuItem;
+  private javax.swing.JMenuItem ctxCopyMenuItem;
+  private javax.swing.JMenuItem ctxCutMenuItem;
+  private javax.swing.JMenuItem ctxPasteMenuItem;
   private javax.swing.JMenuItem cutMenuItem;
+  private javax.swing.JMenu editMenu;
   private javax.swing.JPanel editorPanel;
   private javax.swing.JTextArea errorTextArea;
   private javax.swing.JFileChooser fileChooser;
+  private javax.swing.JMenu fileMenu;
+  private javax.swing.JMenu helpMenu;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel5;
-  private javax.swing.JMenu jMenu1;
-  private javax.swing.JMenu jMenu2;
-  private javax.swing.JMenu jMenu3;
   private javax.swing.JMenuBar jMenuBar1;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
@@ -581,12 +630,10 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JTabbedPane outputTabPane;
   private javax.swing.JMenuItem pasteMenuItem;
   private javax.swing.JMenuItem redoMenuItem;
-  private javax.swing.JMenuItem redoMenuItem1;
   private javax.swing.JMenuItem saveAssemblyAsMenuItem;
   private javax.swing.JMenuItem saveAssemblyMenuItem;
   private javax.swing.JPanel sim;
   private javax.swing.JButton simulateButton;
   private javax.swing.JMenuItem undoMenuItem;
-  private javax.swing.JMenuItem undoMenuItem1;
   // End of variables declaration//GEN-END:variables
 }
