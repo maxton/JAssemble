@@ -56,14 +56,14 @@ public class MainFrame extends javax.swing.JFrame {
   private void openNewFile() {
     if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
       this.currentFile = fileChooser.getSelectedFile();
-    }
-    try {
-      this.assemblyTextArea.setText(Util.readFile(currentFile.getPath(), StandardCharsets.UTF_8));
-      this.saveAssemblyAsMenuItem.setEnabled(true);
-      this.saveAssemblyMenuItem.setEnabled(true);
-      this.undo.discardAllEdits();
-    } catch (IOException ex) {
-      Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+      try {
+        this.assemblyTextArea.setText(Util.readFile(currentFile.getPath(), StandardCharsets.UTF_8));
+        this.saveAssemblyAsMenuItem.setEnabled(true);
+        this.saveAssemblyMenuItem.setEnabled(true);
+        this.undo.discardAllEdits();
+      } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
   }
   
@@ -181,6 +181,10 @@ public class MainFrame extends javax.swing.JFrame {
     jMenu3 = new javax.swing.JMenu();
     undoMenuItem = new javax.swing.JMenuItem();
     redoMenuItem = new javax.swing.JMenuItem();
+    jSeparator1 = new javax.swing.JPopupMenu.Separator();
+    cutMenuItem = new javax.swing.JMenuItem();
+    copyMenuItem = new javax.swing.JMenuItem();
+    pasteMenuItem = new javax.swing.JMenuItem();
     jMenu2 = new javax.swing.JMenu();
 
     AboutPopup.setTitle("About JAssemble");
@@ -244,7 +248,6 @@ public class MainFrame extends javax.swing.JFrame {
     jSplitPane1.setDividerLocation(300);
     jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane1.setResizeWeight(0.5);
-    jSplitPane1.setContinuousLayout(true);
     jSplitPane1.setDoubleBuffered(true);
 
     editorPanel.setLayout(new java.awt.GridBagLayout());
@@ -428,6 +431,19 @@ public class MainFrame extends javax.swing.JFrame {
       }
     });
     jMenu3.add(redoMenuItem);
+    jMenu3.add(jSeparator1);
+
+    cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+    cutMenuItem.setText("Cut");
+    jMenu3.add(cutMenuItem);
+
+    copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+    copyMenuItem.setText("Copy");
+    jMenu3.add(copyMenuItem);
+
+    pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+    pasteMenuItem.setText("Paste");
+    jMenu3.add(pasteMenuItem);
 
     jMenuBar1.add(jMenu3);
 
@@ -540,6 +556,8 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JLabel assemblyCodeLabel;
   private javax.swing.JTextArea assemblyTextArea;
   private javax.swing.JPopupMenu codePopup;
+  private javax.swing.JMenuItem copyMenuItem;
+  private javax.swing.JMenuItem cutMenuItem;
   private javax.swing.JPanel editorPanel;
   private javax.swing.JTextArea errorTextArea;
   private javax.swing.JFileChooser fileChooser;
@@ -555,11 +573,13 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
+  private javax.swing.JPopupMenu.Separator jSeparator1;
   private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JTextArea machineCode;
   private javax.swing.JTabbedPane mainTabPane;
   private javax.swing.JMenuItem openFileMenuItem;
   private javax.swing.JTabbedPane outputTabPane;
+  private javax.swing.JMenuItem pasteMenuItem;
   private javax.swing.JMenuItem redoMenuItem;
   private javax.swing.JMenuItem redoMenuItem1;
   private javax.swing.JMenuItem saveAssemblyAsMenuItem;
