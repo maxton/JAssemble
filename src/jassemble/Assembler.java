@@ -118,7 +118,7 @@ public class Assembler {
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
         break;
       case "inv":
-        ret = new RegisterInstruction(Opcode.INV, regToInt(arg1), regToInt(arg2), 0);
+        ret = new RegisterInstruction(Opcode.INV, regToInt(arg1), 0, regToInt(arg2));
         break;
       case "and":
         ret = new RegisterInstruction(Opcode.AND, regToInt(arg1), regToInt(arg2), regToInt(arg3));

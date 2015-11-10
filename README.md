@@ -10,7 +10,7 @@ A simple 8-bit RISC assembler written in Java.
 |`sw   $rd, ofs($rs)`   |  I  | `MEM[ofs  + R[rs]] = R[rd]`                            |
 |`add  $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] + R[rt]`                                |
 |`addi $rs, $rd, IMM`   |  I  | `R[rd] = R[rs] + IMM`                                  |
-|`inv  $rd, $rs`        |  R  | `R[rd] = ~R[rs]`                                       |
+|`inv  $rd, $rt`        |  R  | `R[rd] = ~R[rt]`                                       |
 |`and  $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] & R[rt]`                                |
 |`andi $rs, $rd, IMM`   |  I  | `R[rd] = R[rs] & IMM`                                  |
 |`or   $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] | R[rt]`                                |

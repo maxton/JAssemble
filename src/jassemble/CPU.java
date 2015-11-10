@@ -100,7 +100,7 @@ public class CPU {
       case INV:
         PC++;
         registers[((RegisterInstruction)inst).getRd()] = 
-                (byte) (~registers[inst.getRs()]);
+                (byte) (~registers[inst.getRt()]);
         break;
       case AND:
         PC++;

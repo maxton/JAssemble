@@ -111,13 +111,14 @@ public class AssemblerTest {
   
   /**
    * Test of assemble method, of class Assembler. (inv instruction)
+   * inv rd, rt (rs = 0)
    * @throws Exception 
    */
   @Test
   public void testAssembleInv() throws Exception {
     System.out.println("Assemble inv instruction");
     Assembler instance = new Assembler("main: inv $1, $2\ninv $3, $1");
-    short[] expResult = {0x4840, 0x44C0};
+    short[] expResult = {0x4240, 0x41C0};
     instance.assemble();
     short[] result = instance.getInstructionWords();
     assertArrayEquals(expResult, result);
