@@ -4,25 +4,23 @@ A simple 8-bit RISC assembler written in Java.
 ## Supported Instructions
 |Name                   |Type |Desc                                                    |
 |-----------------------|:---:|--------------------------------------------------------|
-|`lw   $rs, $rd, ofs`   |  I  | `R[rd] = MEM[ofs + R[rs]]`                             |
-|`sw   $rs, $rd, ofs`   |  I  | `MEM[ofs  + R[rs]] = R[rd]`                            |
 |`lw   $rd, ofs($rs)`   |  I  | `R[rd] = MEM[ofs + R[rs]]`                             |
 |`sw   $rd, ofs($rs)`   |  I  | `MEM[ofs  + R[rs]] = R[rd]`                            |
 |`add  $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] + R[rt]`                                |
-|`addi $rs, $rd, IMM`   |  I  | `R[rd] = R[rs] + IMM`                                  |
+|`addi $rd, $rs, IMM`   |  I  | `R[rd] = R[rs] + IMM`                                  |
 |`inv  $rd, $rt`        |  R  | `R[rd] = ~R[rt]`                                       |
 |`and  $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] & R[rt]`                                |
-|`andi $rs, $rd, IMM`   |  I  | `R[rd] = R[rs] & IMM`                                  |
+|`andi $rd, $rs, IMM`   |  I  | `R[rd] = R[rs] & IMM`                                  |
 |`or   $rd, $rs, $rt`   |  R  | `R[rd] = R[rs] | R[rt]`                                |
-|`ori  $rs, $rd, IMM`   |  I  |  `R[rd] = R[rs] | IMM`                                 |
-|`sra  $rs, $rd, SHAMT` |  I  | `R[rd] = R[rs] >> SHAMT`                               |
-|`sll  $rs, $rd, SHAMT` |  I  | `R[rd] = R[rs] << SHAMT`                               |
-|`beq  $rs, $rd, LABEL` |  J  | `PC = (R[rs] == R[rd]) ? PC + offset(LABEL) : PC + 2`  |
-|`bne  $rs, $rd, LABEL` |  J  | `PC = (R[rs] != R[rd]) ? PC + offset(LABEL) : PC + 2`  |
+|`ori  $rd, $rs, IMM`   |  I  | `R[rd] = R[rs] | IMM`                                  |
+|`sra  $rd, $rs, SHAMT` |  I  | `R[rd] = R[rs] >> SHAMT`                               |
+|`sll  $rd, $rs, SHAMT` |  I  | `R[rd] = R[rs] << SHAMT`                               |
+|`beq  $rs, $rt, LABEL` |  J  | `PC = (R[rs] == R[rt]) ? PC + offset(LABEL) : PC + 2`  |
+|`bne  $rs, $rt, LABEL` |  J  | `PC = (R[rs] != R[rt]) ? PC + offset(LABEL) : PC + 2`  |
 |`clr  $rd`             |  R  | `R[rd] = 0`                                            |
 |`sub  $rd, $rs, $rt`   |  P  | `R[rd] = R[rs] - R[rt]`                                |
-|`subi $rs, $rd, IMM`   |  P  | `R[rd] = R[rs] - IMM`                                  |
-|`move $rs, $rd`        |  P  | `R[rd] = R[rs]`                                        |
+|`subi $rd, $rs, IMM`   |  P  | `R[rd] = R[rs] - IMM`                                  |
+|`move $rd, $rs`        |  P  | `R[rd] = R[rs]`                                        |
 |`li $rd, IMM`          |  P  | `R[rd] = IMM`                                          |
 |`j LABEL`              |  P  | `PC = PC + offset(LABEL)`                              |
 

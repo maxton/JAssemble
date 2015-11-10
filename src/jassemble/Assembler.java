@@ -115,7 +115,7 @@ public class Assembler {
         ret = new RegisterInstruction(Opcode.ADD, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "addi":
-        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg2), regToInt(arg1), Integer.decode(arg3));
         break;
       case "inv":
         ret = new RegisterInstruction(Opcode.INV, regToInt(arg1), 0, regToInt(arg2));
@@ -124,19 +124,19 @@ public class Assembler {
         ret = new RegisterInstruction(Opcode.AND, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "andi":
-        ret = new ImmediateInstruction(Opcode.ANDI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.ANDI, regToInt(arg2), regToInt(arg1), Integer.decode(arg3));
         break;
       case "or":
         ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg3));
         break;
       case "ori":
-        ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg2), regToInt(arg1), Integer.decode(arg3));
         break;
       case "sra":
-        ret = new ImmediateInstruction(Opcode.SRA, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.SRA, regToInt(arg2), regToInt(arg1), Integer.decode(arg3));
         break;
       case "sll":
-        ret = new ImmediateInstruction(Opcode.SLL, regToInt(arg1), regToInt(arg2), Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.SLL, regToInt(arg2), regToInt(arg1), Integer.decode(arg3));
         break;
       case "beq":
         ret = new JumpInstruction(Opcode.BEQ, regToInt(arg1), regToInt(arg2), getLabel(arg3), currentInstruction);
@@ -172,26 +172,26 @@ public class Assembler {
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg2), regToInt(arg1), 1);
         break;
       /*
-        subi $rs, $rd, IMM
+        subi $rd, $rs, IMM
         R[rd] = rs - IMM
         
         implemented as:
-        addi $rs, $rd, (-IMM)
+        addi $rd, $rs, (-IMM)
         
         (the assembler makes the immediate negative)
       */
       case "subi":
-        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg2), -Integer.decode(arg3));
+        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg2), regToInt(arg1), -Integer.decode(arg3));
         break;
       /*
-        move $rs, $rd
+        move $rd, $rs
         R[rd] = R[rs]
         
         implemented as:
         or $rd, $rs, $rs
       */
       case "move":
-        ret = new RegisterInstruction(Opcode.OR, regToInt(arg2), regToInt(arg1), regToInt(arg1));
+        ret = new RegisterInstruction(Opcode.OR, regToInt(arg1), regToInt(arg2), regToInt(arg2));
         break;
       /*
         li $rd, IMM

@@ -41,13 +41,16 @@ public class JumpInstruction extends Instruction {
     this.instructionNum = instructionNum;
   }
   
-  public short getTarget(){
-    return (short)(this.target.instructionNum - this.instructionNum);
+  public byte getTarget(){
+    return (byte)(this.target.instructionNum - this.instructionNum);
   }
   
   @Override
   public String toString() {
-    return op.toString().toLowerCase() + " $" + rs + ", $"+rt+", "+getTarget();
+    String t = Instruction.decompToHex 
+                  ? String.format("0x%02X", getTarget())
+                  : Integer.toString(getTarget());
+    return op.toString().toLowerCase() + " $" + rs + ", $"+rt+", "+t;
   }
   
   @Override

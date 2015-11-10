@@ -30,6 +30,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private short[] instructionWords;
   private byte[] data;
   private CPU cpu;
+  private String fmt = Instruction.decompToHex ? "%02X" : "%d";
   Thread cpuThread;
   CPURunner cpuRunner;
   
@@ -37,14 +38,22 @@ public class SimulatorPanel extends javax.swing.JPanel {
    * Creates new form SimulatorPanel
    * @param as The assembler which has prepared the instructions for this simulator.
    */
-  public SimulatorPanel(Assembler as) {
+  public SimulatorPanel() {
     initComponents();
     this.instructionTable.getColumnModel().getColumn(0).setMaxWidth(48);
+    this.instructions = new Instruction[0];
+    this.instructionWords = new short[0];
+    this.data = new byte[0];
+    this.cpu = new CPU(instructionWords, data);
+  }
+  
+  public void setAssembler(Assembler as) {
     this.instructions = as.getInstructions();
     this.instructionWords = as.getInstructionWords();
     this.data = new byte[256];
     this.cpu = new CPU(instructionWords, data);
     this.instructionTable.getSelectionModel().setSelectionInterval(0, 0);
+    this.refreshGui();
   }
   
   /**
@@ -114,13 +123,17 @@ public class SimulatorPanel extends javax.swing.JPanel {
    * Update all GUI elements with current CPU state.
    */
   private void refreshGui(){
+    fmt = Instruction.decompToHex ? "%02X" : "%d";
     instructionTable.getSelectionModel().setSelectionInterval(cpu.getPC(), cpu.getPC());
-    pcTextField.setText(String.valueOf(cpu.getPC()));
-    r0TextField.setText(String.valueOf(cpu.getRegister(0)));
-    r1TextField.setText(String.valueOf(cpu.getRegister(1)));
-    r2TextField.setText(String.valueOf(cpu.getRegister(2)));
-    r3TextField.setText(String.valueOf(cpu.getRegister(3)));
-    dataTable.repaint();
+    pcTextField.setText(String.format(fmt, cpu.getPC()));
+    r0TextField.setText(String.format(fmt, cpu.getRegister(0)));
+    r1TextField.setText(String.format(fmt, cpu.getRegister(1)));
+    r2TextField.setText(String.format(fmt, cpu.getRegister(2)));
+    r3TextField.setText(String.format(fmt, cpu.getRegister(3)));
+    dataTable.invalidate();
+    instructionTable.invalidate();
+    this.revalidate();
+    this.repaint();
   }
   
   private class DataTableModel
@@ -149,7 +162,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
         return rowIndex;
       }
       else {
-        return String.valueOf(data[rowIndex]);
+        return String.format(fmt, data[rowIndex]);
       }
     }
   }
@@ -195,6 +208,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private void initComponents() {
     java.awt.GridBagConstraints gridBagConstraints;
 
+    buttonGroup1 = new javax.swing.ButtonGroup();
     jScrollPane2 = new javax.swing.JScrollPane();
     instructionTable = new javax.swing.JTable();
     jScrollPane3 = new javax.swing.JScrollPane();
@@ -214,6 +228,10 @@ public class SimulatorPanel extends javax.swing.JPanel {
     runSpeedSlider = new javax.swing.JSlider();
     jLabel6 = new javax.swing.JLabel();
     runButton = new javax.swing.JToggleButton();
+    jPanel1 = new javax.swing.JPanel();
+    jLabel7 = new javax.swing.JLabel();
+    hexRadioButton = new javax.swing.JRadioButton();
+    decRadioButton = new javax.swing.JRadioButton();
 
     setLayout(new java.awt.GridBagLayout());
 
@@ -254,6 +272,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     add(jScrollPane3, gridBagConstraints);
 
     stepButton.setText("Step");
+    stepButton.setFocusable(false);
+    stepButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    stepButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     stepButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         stepButtonActionPerformed(evt);
@@ -267,6 +288,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     add(stepButton, gridBagConstraints);
 
     resetButton.setText("Reset");
+    resetButton.setFocusable(false);
+    resetButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    resetButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     resetButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         resetButtonActionPerformed(evt);
@@ -372,6 +396,9 @@ public class SimulatorPanel extends javax.swing.JPanel {
     add(jLabel6, gridBagConstraints);
 
     runButton.setText("Run");
+    runButton.setFocusable(false);
+    runButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    runButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     runButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         runButtonActionPerformed(evt);
@@ -383,6 +410,36 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.weightx = 0.2;
     add(runButton, gridBagConstraints);
+
+    jLabel7.setText("Immediates:");
+    jPanel1.add(jLabel7);
+
+    buttonGroup1.add(hexRadioButton);
+    hexRadioButton.setText("Hex");
+    hexRadioButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        radioButtonChanged(evt);
+      }
+    });
+    jPanel1.add(hexRadioButton);
+
+    buttonGroup1.add(decRadioButton);
+    decRadioButton.setSelected(true);
+    decRadioButton.setText("Dec");
+    decRadioButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        radioButtonChanged(evt);
+      }
+    });
+    jPanel1.add(decRadioButton);
+
+    gridBagConstraints = new java.awt.GridBagConstraints();
+    gridBagConstraints.gridx = 2;
+    gridBagConstraints.gridy = 10;
+    gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+    gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
+    gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+    add(jPanel1, gridBagConstraints);
   }// </editor-fold>//GEN-END:initComponents
 
   private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -400,9 +457,21 @@ public class SimulatorPanel extends javax.swing.JPanel {
       this.stop();
   }//GEN-LAST:event_runButtonActionPerformed
 
+  private void radioButtonChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioButtonChanged
+    if(hexRadioButton.isSelected()){
+      Instruction.decompToHex = true;
+    } else {
+      Instruction.decompToHex = false;
+    }
+    this.refreshGui();
+  }//GEN-LAST:event_radioButtonChanged
+
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.ButtonGroup buttonGroup1;
   private javax.swing.JTable dataTable;
+  private javax.swing.JRadioButton decRadioButton;
+  private javax.swing.JRadioButton hexRadioButton;
   private javax.swing.JTable instructionTable;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
@@ -410,6 +479,8 @@ public class SimulatorPanel extends javax.swing.JPanel {
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
+  private javax.swing.JLabel jLabel7;
+  private javax.swing.JPanel jPanel1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JTextField pcTextField;

@@ -44,7 +44,13 @@ public class ImmediateInstruction extends Instruction {
   
   @Override
   public String toString(){
-    return op.toString().toLowerCase() + " $" + rs + ", $"+rt+", "+imm;
+    String imm = Instruction.decompToHex 
+                  ? String.format("0x%02X", this.imm)
+                  : Integer.toString(this.imm);
+    if(this.op == Opcode.LW || this.op == Opcode.SW)
+      return op.toString().toLowerCase() + " $" + rt +  ", "+imm+"($"+ rs + ")";
+    else
+      return op.toString().toLowerCase() + " $" + rt + ", $"+rs+", "+imm;
   }
   
   @Override

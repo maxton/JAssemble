@@ -102,7 +102,7 @@ public class AssemblerTest {
   @Test
   public void testAssembleAddi() throws Exception {
     System.out.println("Assemble addi instruction");
-    Assembler instance = new Assembler("main: addi $1, $2, 5\naddi $3, $1, -6");
+    Assembler instance = new Assembler("main: addi $2, $1, 5\naddi $1, $3, -6");
     short[] expResult = {0x3605, 0x3DFA};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -142,7 +142,7 @@ public class AssemblerTest {
   @Test
   public void testAssembleAndi() throws Exception {
     System.out.println("Assemble andi instruction");
-    Assembler instance = new Assembler("main: andi $1, $2, 5\nandi $3, $1, -6");
+    Assembler instance = new Assembler("main: andi $2, $1, 5\nandi $1, $3, -6");
     short[] expResult = {0x6605, 0x6DFA};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -168,7 +168,7 @@ public class AssemblerTest {
   @Test
   public void testAssembleOri() throws Exception {
     System.out.println("Assemble ori instruction");
-    Assembler instance = new Assembler("main: ori $1, $2, 5\nori $3, $1, -6");
+    Assembler instance = new Assembler("main: ori $2, $1, 5\nori $1, $3, -6");
     short[] expResult = {(short)0x8605, (short)0x8DFA};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -182,7 +182,7 @@ public class AssemblerTest {
   public void testAssembleSra() throws Exception {
     System.out.println("Assemble sra instruction");
     // are negative shifts valid? I don't think so...
-    Assembler instance = new Assembler("main: sra $1, $2, 5\nsra $3, $1, 7");
+    Assembler instance = new Assembler("main: sra $2, $1, 5\nsra $1, $3, 7");
     short[] expResult = {(short)0x9605, (short)0x9D07};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -196,7 +196,7 @@ public class AssemblerTest {
   public void testAssembleSll() throws Exception {
     System.out.println("Assemble sll instruction");
     // are negative shifts valid? I don't think so...
-    Assembler instance = new Assembler("main: sll $1, $2, 5\nsll $3, $1, 7");
+    Assembler instance = new Assembler("main: sll $2, $1, 5\nsll $1, $3, 7");
     short[] expResult = {(short)0xA605, (short)0xAD07};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -277,7 +277,7 @@ public class AssemblerTest {
   @Test
   public void testAssembleSubi() throws Exception {
     System.out.println("Assemble subi pseudo-instruction");
-    Assembler instance = new Assembler("main: subi $1, $2, 5\nsubi $3, $1, -6");
+    Assembler instance = new Assembler("main: subi $2, $1, 5\nsubi $1, $3, -6");
     short[] expResult = {0x36FB, 0x3D06};
     instance.assemble();
     short[] result = instance.getInstructionWords();
@@ -302,14 +302,12 @@ public class AssemblerTest {
   
   /**
    * Test of assemble method, of class Assembler. (move instruction)
-   * Note: should be move $rs, $rd (unlike in MIPS)
-   * (according to text document)
-   * This implementation does move $rs, $rd --> or $rd, $rs, $rs
+   * This implementation does move $rd, $rs --> or $rd, $rs, $rs
    */
   @Test
   public void testAssembleMove() throws Exception {
     System.out.println("Assemble move pseudo-instruction");
-    Assembler instance = new Assembler("main: move $2, $1\nmove $0, $3");
+    Assembler instance = new Assembler("main: move $1, $2\nmove $3, $0");
     short[] expResult = {0x7A40, 0x70C0};
     instance.assemble();
     short[] result = instance.getInstructionWords();

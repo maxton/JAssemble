@@ -41,7 +41,7 @@ import javax.swing.undo.UndoManager;
  * @author Max
  */
 public class MainFrame extends javax.swing.JFrame {
-
+  private SimulatorPanel simulator;
   private File currentFile;
   final UndoManager undo = new UndoManager();
   Document doc;
@@ -50,7 +50,8 @@ public class MainFrame extends javax.swing.JFrame {
    */
   public MainFrame() {
     initComponents();
-    
+    this.simulator = new SimulatorPanel();
+    this.sim.add(simulator).setVisible(true);
   }
   
   private void openNewFile() {
@@ -115,9 +116,9 @@ public class MainFrame extends javax.swing.JFrame {
       errorTextArea.append("Couldn't assemble code:\n " + ex.getMessage() + "\n");
       return;
     }
-    this.sim.removeAll();
-    this.sim.add(new SimulatorPanel(as)).setVisible(true);
+    this.simulator.setAssembler(as);
     mainTabPane.setSelectedIndex(1);
+    this.sim.revalidate();
   }
 
   

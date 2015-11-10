@@ -29,9 +29,9 @@ public class CPUTest {
     this.data = new byte[256];
     this.as = new Assembler("li $0, 3\n"
             + "addi $0, $0, 4\n"
-            + "move $0, $1\n"
-            + "move $1, $2\n"
-            + "move $2, $3");
+            + "move $1, $0\n"
+            + "move $2, $1\n"
+            + "move $3, $2");
     as.assemble();
     CPU instance = new CPU(as.getInstructionWords(), data);
     instance.step(8);
@@ -93,7 +93,7 @@ public class CPUTest {
     this.data = new byte[256];
     this.as = new Assembler("li  $0, 8\n"
                           + "and $1, $0, $1\n"
-                          + "andi $0, $2, 15");
+                          + "andi $2, $0, 15");
     as.assemble();
     CPU instance = new CPU(as.getInstructionWords(), data);
     instance.step(4);
@@ -107,7 +107,7 @@ public class CPUTest {
     this.data = new byte[256];
     this.as = new Assembler("li  $0, 8\n"
                           + "or $1, $0, $1\n"
-                          + "ori $0, $2, 15");
+                          + "ori $2, $0, 15");
     as.assemble();
     CPU instance = new CPU(as.getInstructionWords(), data);
     instance.step(4);

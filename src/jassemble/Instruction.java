@@ -22,6 +22,8 @@ package jassemble;
  * @author Max
  */
 public abstract class Instruction {
+  public static boolean decompToHex = false;
+  
   public enum Type {
     R, I, J
   }
