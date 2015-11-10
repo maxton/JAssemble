@@ -50,10 +50,10 @@ public class CPU {
     return this.instrMem[idx];
   }
   public void setMem(int idx, byte data) {
-    this.dataMem[idx] = data;
+    this.dataMem[idx & 0xFF] = data;
   }
   public byte getMem(int idx){
-    return this.dataMem[idx];
+    return this.dataMem[idx & 0xFF];
   }
   public void setRegister(int idx, byte val) {
     this.registers[idx] = val;
@@ -80,12 +80,12 @@ public class CPU {
       case LW:
         PC++;
         registers[inst.getRt()] = 
-                dataMem[registers[inst.getRs()] + ((ImmediateInstruction)inst).getImm()];
+                getMem(registers[inst.getRs()] + ((ImmediateInstruction)inst).getImm());
         break;
       case SW:
         PC++;
-        dataMem[registers[inst.getRs()] + ((ImmediateInstruction)inst).getImm()] = 
-                registers[inst.getRt()];
+        setMem(registers[inst.getRs()] + ((ImmediateInstruction)inst).getImm(), 
+                registers[inst.getRt()]);
         break;
       case ADD:
         PC++;
