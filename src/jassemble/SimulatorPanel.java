@@ -40,7 +40,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
    */
   public SimulatorPanel() {
     initComponents();
-    this.instructionTable.getColumnModel().getColumn(0).setMaxWidth(48);
+    this.instructionTable.getColumnModel().getColumn(0).setMaxWidth(40);
     this.instructions = new Instruction[0];
     this.instructionWords = new short[0];
     this.data = new byte[0];
@@ -250,7 +250,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-    gridBagConstraints.weightx = 0.4;
+    gridBagConstraints.weightx = 0.6;
     gridBagConstraints.weighty = 1.0;
     add(jScrollPane2, gridBagConstraints);
 
@@ -267,7 +267,7 @@ public class SimulatorPanel extends javax.swing.JPanel {
     gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
     gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
     gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
-    gridBagConstraints.weightx = 0.15;
+    gridBagConstraints.weightx = 0.25;
     gridBagConstraints.weighty = 1.0;
     add(jScrollPane3, gridBagConstraints);
 

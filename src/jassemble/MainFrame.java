@@ -31,6 +31,7 @@ import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -42,7 +43,7 @@ import javax.swing.undo.UndoManager;
  */
 public class MainFrame extends javax.swing.JFrame {
   private SimulatorPanel simulator;
-  private File currentFile;
+  private File assemblyFile, machineCodeFile;
   final UndoManager undo = new UndoManager();
   Document doc;
   /**
@@ -54,28 +55,86 @@ public class MainFrame extends javax.swing.JFrame {
     this.sim.add(simulator).setVisible(true);
   }
   
+  /**
+   * Shows the file open dialog for an assembly source file and loads it.
+   */
   private void openNewFile() {
+    fileChooser.setCurrentDirectory(assemblyFile);
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Assembly source (*.s)","s"));
     if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-      this.currentFile = fileChooser.getSelectedFile();
+      this.assemblyFile = fileChooser.getSelectedFile();
       try {
-        this.assemblyTextArea.setText(Util.readFile(currentFile.getPath(), StandardCharsets.UTF_8));
+        this.assemblyTextArea.setText(Util.readFile(assemblyFile.getPath(), StandardCharsets.UTF_8));
         this.saveAssemblyAsMenuItem.setEnabled(true);
         this.saveAssemblyMenuItem.setEnabled(true);
         this.undo.discardAllEdits();
+        this.setTitle(String.format("%s - JAssemble", assemblyFile));
       } catch (IOException ex) {
         Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
   }
   
+  /**
+   * Shows the file selection window and saves the current source code as a new file.
+   */
+  private void saveAs() {
+    fileChooser.setCurrentDirectory(assemblyFile);
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Assembly source (*.s)","s"));
+    if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+      this.assemblyFile = fileChooser.getSelectedFile();
+      this.saveFile();
+    }
+  }
+  
+  /**
+   * Shows the file selection window and saves the current machine code as a new file.
+   */
+  private void export() {
+    if(machineCodeFile == null){
+      if(assemblyFile != null){
+        machineCodeFile = new File(assemblyFile.getAbsolutePath().replaceAll("\\.s", "") + ".coe");
+      }
+    }
+    fileChooser.setSelectedFile(machineCodeFile);
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Coefficients File (*.coe)","coe"));
+    if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+      machineCodeFile = fileChooser.getSelectedFile();
+      try {
+        Util.saveFile(machineCodeFile.getPath(), machineCode.getText());
+      } catch (IOException ex) {
+        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+  
+  /**
+   * Saves the currently open assembly file.
+   */
   private void saveFile() {
-    if(this.currentFile == null) return;
-    try {
-      Util.saveFile(currentFile.getPath(), assemblyTextArea.getText());
+    if(this.assemblyFile == null) 
+      saveAs();
+    else try {
+      Util.saveFile(assemblyFile.getPath(), assemblyTextArea.getText());
+      this.setTitle(String.format("%s - JAssemble", assemblyFile));
     } catch (IOException ex) {
       Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
+  
+  /**
+   * Updates the title bar to tell the user that the file has been modified but not saved.
+   */
+  private void modified() {
+    if(assemblyFile != null)
+      this.setTitle(String.format("*%s - JAssemble", assemblyFile));
+    else
+      this.setTitle("*(new file) - JAssemble");
+}
+  
+  /**
+   * Implementation of MessagePasser to get warnings and errors on assembly.
+   */
   private class MPImpl implements MessagePasser {
     @Override
     public void sendMessage(String msg) {
@@ -83,6 +142,10 @@ public class MainFrame extends javax.swing.JFrame {
       errorTextArea.append(msg);
     }
   }
+  
+  /**
+   * Attempts to assemble the code in the assembly text area.
+   */
   private void assemble() {
     errorTextArea.setText("");
     Assembler as = new Assembler(assemblyTextArea.getText());
@@ -99,12 +162,16 @@ public class MainFrame extends javax.swing.JFrame {
           machineCode.append(";\n");
         }
       }
+      outputTabPane.setSelectedIndex(0);
     } catch (Exception ex) {
       outputTabPane.setSelectedIndex(1);
       errorTextArea.append("Couldn't assemble code:\n " + ex.getMessage() + "\n");
     }
   }
   
+  /**
+   * Attempts to assemble the code and initialize the simulator with the assembled instructions.
+   */
   private void simulate() {
     errorTextArea.setText("");
     Assembler as = new Assembler(assemblyTextArea.getText());
@@ -180,6 +247,8 @@ public class MainFrame extends javax.swing.JFrame {
     openFileMenuItem = new javax.swing.JMenuItem();
     saveAssemblyMenuItem = new javax.swing.JMenuItem();
     saveAssemblyAsMenuItem = new javax.swing.JMenuItem();
+    jSeparator2 = new javax.swing.JPopupMenu.Separator();
+    exportMCMenuItem = new javax.swing.JMenuItem();
     editMenu = new javax.swing.JMenu();
     undoMenuItem = new javax.swing.JMenuItem();
     redoMenuItem = new javax.swing.JMenuItem();
@@ -187,6 +256,9 @@ public class MainFrame extends javax.swing.JFrame {
     cutMenuItem = new javax.swing.JMenuItem();
     copyMenuItem = new javax.swing.JMenuItem();
     pasteMenuItem = new javax.swing.JMenuItem();
+    jMenu1 = new javax.swing.JMenu();
+    jMenuItem1 = new javax.swing.JMenuItem();
+    jMenuItem2 = new javax.swing.JMenuItem();
     helpMenu = new javax.swing.JMenu();
     aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -204,7 +276,7 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2.setText("©2015 Maxton Connor");
 
     jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel5.setText("Version 0.9.2");
+    jLabel5.setText("Version 1.0.0");
 
     javax.swing.GroupLayout AboutPopupLayout = new javax.swing.GroupLayout(AboutPopup.getContentPane());
     AboutPopup.getContentPane().setLayout(AboutPopupLayout);
@@ -287,6 +359,7 @@ public class MainFrame extends javax.swing.JFrame {
     doc.addUndoableEditListener(new UndoableEditListener() {
       public void undoableEditHappened(UndoableEditEvent evt) {
         undo.addEdit(evt.getEdit());
+        modified();
       }
     });
 
@@ -344,14 +417,14 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -368,14 +441,14 @@ public class MainFrame extends javax.swing.JFrame {
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         .addContainerGap())
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel4Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -390,9 +463,11 @@ public class MainFrame extends javax.swing.JFrame {
 
     getContentPane().add(mainTabPane);
 
+    fileMenu.setMnemonic('f');
     fileMenu.setText("File");
 
     openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+    openFileMenuItem.setMnemonic('o');
     openFileMenuItem.setText("Open...");
     openFileMenuItem.setName("openFileMenuItem"); // NOI18N
     openFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -403,8 +478,8 @@ public class MainFrame extends javax.swing.JFrame {
     fileMenu.add(openFileMenuItem);
 
     saveAssemblyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    saveAssemblyMenuItem.setMnemonic('s');
     saveAssemblyMenuItem.setText("Save assembly");
-    saveAssemblyMenuItem.setEnabled(false);
     saveAssemblyMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         saveAssemblyMenuItemActionPerformed(evt);
@@ -413,6 +488,7 @@ public class MainFrame extends javax.swing.JFrame {
     fileMenu.add(saveAssemblyMenuItem);
 
     saveAssemblyAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+    saveAssemblyAsMenuItem.setMnemonic('a');
     saveAssemblyAsMenuItem.setText("Save assembly as...");
     saveAssemblyAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,12 +496,25 @@ public class MainFrame extends javax.swing.JFrame {
       }
     });
     fileMenu.add(saveAssemblyAsMenuItem);
+    fileMenu.add(jSeparator2);
+
+    exportMCMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+    exportMCMenuItem.setMnemonic('e');
+    exportMCMenuItem.setText("Export machine code...");
+    exportMCMenuItem.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        exportMCMenuItemActionPerformed(evt);
+      }
+    });
+    fileMenu.add(exportMCMenuItem);
 
     jMenuBar1.add(fileMenu);
 
+    editMenu.setMnemonic('e');
     editMenu.setText("Edit");
 
     undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+    undoMenuItem.setMnemonic('u');
     undoMenuItem.setText("Undo");
     undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -435,6 +524,7 @@ public class MainFrame extends javax.swing.JFrame {
     editMenu.add(undoMenuItem);
 
     redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
+    redoMenuItem.setMnemonic('r');
     redoMenuItem.setText("Redo");
     redoMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -445,6 +535,7 @@ public class MainFrame extends javax.swing.JFrame {
     editMenu.add(jSeparator1);
 
     cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+    cutMenuItem.setMnemonic('t');
     cutMenuItem.setText("Cut");
     cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -454,6 +545,7 @@ public class MainFrame extends javax.swing.JFrame {
     editMenu.add(cutMenuItem);
 
     copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+    copyMenuItem.setMnemonic('y');
     copyMenuItem.setText("Copy");
     copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -463,6 +555,7 @@ public class MainFrame extends javax.swing.JFrame {
     editMenu.add(copyMenuItem);
 
     pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
+    pasteMenuItem.setMnemonic('p');
     pasteMenuItem.setText("Paste");
     pasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -473,9 +566,41 @@ public class MainFrame extends javax.swing.JFrame {
 
     jMenuBar1.add(editMenu);
 
+    jMenu1.setMnemonic('r');
+    jMenu1.setText("Run");
+    jMenu1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        simulateButtonActionPerformed(evt);
+      }
+    });
+
+    jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
+    jMenuItem1.setMnemonic('a');
+    jMenuItem1.setText("Assemble");
+    jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        assembleButtonActionPerformed(evt);
+      }
+    });
+    jMenu1.add(jMenuItem1);
+
+    jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+    jMenuItem2.setMnemonic('s');
+    jMenuItem2.setText("Simulate");
+    jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        simulateButtonActionPerformed(evt);
+      }
+    });
+    jMenu1.add(jMenuItem2);
+
+    jMenuBar1.add(jMenu1);
+
+    helpMenu.setMnemonic('h');
     helpMenu.setText("Help");
 
-    aboutMenuItem.setText("About");
+    aboutMenuItem.setMnemonic('a');
+    aboutMenuItem.setText("About...");
     aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         aboutMenuItemActionPerformed(evt);
@@ -495,11 +620,7 @@ public class MainFrame extends javax.swing.JFrame {
   }//GEN-LAST:event_openFileMenuItemActionPerformed
 
   private void saveAssemblyAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAssemblyAsMenuItemActionPerformed
-    if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      this.currentFile = fileChooser.getSelectedFile();
-      this.saveFile();
-      this.saveAssemblyMenuItem.setEnabled(true);
-    }
+    saveAs();
   }//GEN-LAST:event_saveAssemblyAsMenuItemActionPerformed
 
   private void assembleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assembleButtonActionPerformed
@@ -549,6 +670,10 @@ public class MainFrame extends javax.swing.JFrame {
   private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
     this.AboutPopup.setVisible(true);
   }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+  private void exportMCMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMCMenuItemActionPerformed
+    export();
+  }//GEN-LAST:event_exportMCMenuItemActionPerformed
 
   private void undoCode(){
     try {
@@ -611,19 +736,24 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JMenu editMenu;
   private javax.swing.JPanel editorPanel;
   private javax.swing.JTextArea errorTextArea;
+  private javax.swing.JMenuItem exportMCMenuItem;
   private javax.swing.JFileChooser fileChooser;
   private javax.swing.JMenu fileMenu;
   private javax.swing.JMenu helpMenu;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel5;
+  private javax.swing.JMenu jMenu1;
   private javax.swing.JMenuBar jMenuBar1;
+  private javax.swing.JMenuItem jMenuItem1;
+  private javax.swing.JMenuItem jMenuItem2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JPopupMenu.Separator jSeparator1;
+  private javax.swing.JPopupMenu.Separator jSeparator2;
   private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JTextArea machineCode;
   private javax.swing.JTabbedPane mainTabPane;
