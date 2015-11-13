@@ -79,7 +79,7 @@ public class MainFrame extends javax.swing.JFrame {
    * Shows the file selection window and saves the current source code as a new file.
    */
   private void saveAs() {
-    fileChooser.setCurrentDirectory(assemblyFile);
+    fileChooser.setSelectedFile(assemblyFile);
     fileChooser.setFileFilter(new FileNameExtensionFilter("Assembly source (*.s)","s"));
     if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       this.assemblyFile = fileChooser.getSelectedFile();
@@ -276,7 +276,7 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2.setText("©2015 Maxton Connor");
 
     jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel5.setText("Version 1.0.0");
+    jLabel5.setText("Version 1.0.1");
 
     javax.swing.GroupLayout AboutPopupLayout = new javax.swing.GroupLayout(AboutPopup.getContentPane());
     AboutPopup.getContentPane().setLayout(AboutPopupLayout);
