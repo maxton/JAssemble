@@ -56,13 +56,22 @@ public class Assembler {
   private Label getLabel(String name, int lineNum, int instructionNum, boolean update){
     if(!labels.containsKey(name)){
       labels.put(name, new Label(lineNum,instructionNum, name));
-    } 
+    }
     Label ret = labels.get(name);
     if(update){
       ret.fileLine = lineNum;
       ret.instructionNum = instructionNum;
     }
     return ret;
+  }
+  
+  
+  private void addNewLabel(String name, int lineNum, int instructionNum) throws Exception {
+    if(!labels.containsKey(name)){
+      labels.put(name, new Label(lineNum,instructionNum, name));
+    } else {
+      throw new Exception(String.format("Duplicate label \"%s\" encountered", name));
+    }
   }
   
   /**
@@ -224,6 +233,10 @@ public class Assembler {
   
   /**
    * Assemble the internal assembly code to machine instruction words.
+   * 
+   * TODO: Clean up this function, stop using regular expressions,
+   *       add better comment support (don't give warnings)
+   * 
    * @param mp Where to send warning messages.
    * @throws InvalidInstructionException 
    * @throws Exception
@@ -255,7 +268,14 @@ public class Assembler {
         continue;
       } else if(m3.matches()) {
         if(m3.group(2) != null) { // if contains label
-          getLabel(m3.group(2), i+1, currentInstruction, true);
+          try {
+            addNewLabel(m3.group(2), i+1, currentInstruction);
+          } catch(Exception e) {
+            if(mp != null){
+              mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage()+"\n");
+              error = true;
+            }
+          }
         }
         try {
           //                            instr, base, data, offset
@@ -267,10 +287,24 @@ public class Assembler {
           }
         }
       } else if(m2.matches()) {
-        getLabel(m2.group(2), i+1, currentInstruction, true);
+        try {
+            addNewLabel(m2.group(2), i+1, currentInstruction);
+          } catch(Exception e) {
+            if(mp != null){
+              mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage()+"\n");
+              error = true;
+            }
+          }
       } else if(m1.matches()) {
         if(m1.group(2) != null) { // if contains label
-          getLabel(m1.group(2), i+1, currentInstruction, true);
+          try {
+            addNewLabel(m1.group(2), i+1, currentInstruction);
+          } catch(Exception e) {
+            if(mp != null){
+              mp.sendMessage("Error: at line "+(i+1)+",\n "+e.getMessage()+"\n");
+              error = true;
+            }
+          }
         }
         try {
           this.addInstruction(m1.group(3), m1.group(4), m1.group(6), m1.group(8));

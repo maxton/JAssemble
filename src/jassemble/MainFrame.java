@@ -46,6 +46,11 @@ public class MainFrame extends javax.swing.JFrame {
   private File assemblyFile, machineCodeFile;
   final UndoManager undo = new UndoManager();
   Document doc;
+  final FileNameExtensionFilter coeFilter = 
+          new FileNameExtensionFilter("Coefficients File (*.coe)","coe");
+  final FileNameExtensionFilter asmFilter =
+          new FileNameExtensionFilter("Assembly source (*.s)","s");
+  
   /**
    * Creates new form MainFrame
    */
@@ -60,7 +65,8 @@ public class MainFrame extends javax.swing.JFrame {
    */
   private void openNewFile() {
     fileChooser.setCurrentDirectory(assemblyFile);
-    fileChooser.setFileFilter(new FileNameExtensionFilter("Assembly source (*.s)","s"));
+    fileChooser.removeChoosableFileFilter(coeFilter);
+    fileChooser.setFileFilter(asmFilter);
     if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
       this.assemblyFile = fileChooser.getSelectedFile();
       try {
@@ -80,7 +86,8 @@ public class MainFrame extends javax.swing.JFrame {
    */
   private void saveAs() {
     fileChooser.setSelectedFile(assemblyFile);
-    fileChooser.setFileFilter(new FileNameExtensionFilter("Assembly source (*.s)","s"));
+    fileChooser.removeChoosableFileFilter(coeFilter);
+    fileChooser.setFileFilter(asmFilter);
     if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       this.assemblyFile = fileChooser.getSelectedFile();
       this.saveFile();
@@ -97,7 +104,8 @@ public class MainFrame extends javax.swing.JFrame {
       }
     }
     fileChooser.setSelectedFile(machineCodeFile);
-    fileChooser.setFileFilter(new FileNameExtensionFilter("Coefficients File (*.coe)","coe"));
+    fileChooser.removeChoosableFileFilter(asmFilter);
+    fileChooser.setFileFilter(coeFilter);
     if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
       machineCodeFile = fileChooser.getSelectedFile();
       try {
