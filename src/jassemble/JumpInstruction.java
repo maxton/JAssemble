@@ -42,7 +42,7 @@ public class JumpInstruction extends Instruction {
   }
   
   public byte getTarget(){
-    return (byte)(this.target.instructionNum - this.instructionNum);
+    return (byte)(this.target.getInstructionNum() - this.instructionNum);
   }
   
   @Override
@@ -58,7 +58,7 @@ public class JumpInstruction extends Instruction {
     return (this.op.ordinal() << 12)
                     | (this.rs << 10)
                     | (this.rt << 8)
-                    | ((this.target.instructionNum - this.instructionNum) & 0xFF);
+                    | ((this.target.getInstructionNum() - this.instructionNum) & 0xFF);
   }
   
   @Override

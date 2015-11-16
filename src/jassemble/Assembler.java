@@ -59,8 +59,7 @@ public class Assembler {
     }
     Label ret = labels.get(name);
     if(update){
-      ret.fileLine = lineNum;
-      ret.instructionNum = instructionNum;
+      updateLabel(name, lineNum, instructionNum);
     }
     return ret;
   }
@@ -70,8 +69,18 @@ public class Assembler {
     if(!labels.containsKey(name)){
       labels.put(name, new Label(lineNum,instructionNum, name));
     } else {
-      throw new Exception(String.format("Duplicate label \"%s\" encountered", name));
+      if(labels.get(name).getLine() != 0)
+        throw new Exception(String.format("Duplicate label \"%s\" encountered", name));
+      else
+        updateLabel(name, lineNum, instructionNum);
     }
+  }
+  
+  private void updateLabel(String name, int lineNum, int instructionNum){
+    Label tmp = labels.get(name);
+    tmp.setName(name);
+    tmp.setLine(lineNum);
+    tmp.setInstruction(instructionNum);
   }
   
   /**
@@ -322,9 +331,10 @@ public class Assembler {
       }
     }
     for(String key : labels.keySet()){
-      if(labels.get(key).fileLine == 0){
+      if(labels.get(key).getLine() == 0){
         error = true;
-        mp.sendMessage("Error: jump to nonexistent label '"+key+"'\n");
+        if(mp != null)
+          mp.sendMessage("Error: jump to nonexistent label '"+key+"'\n");
       }
     }
     

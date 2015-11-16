@@ -24,17 +24,17 @@ class Label {
   /** 
    * The line in source code where this Label was found.
    */
-  public int fileLine;
+  private int fileLine;
   
   /**
    * The position of the instruction word to which this Label points.
    */
-  public int instructionNum;
+  private int instructionNum;
   
   /**
    * The name of this label.
    */
-  public String name;
+  private String name;
   
   /**
    * Instantiate a label at the given source line # and instruction number.
@@ -44,5 +44,34 @@ class Label {
   public Label(int fileLine, int instructionNum, String name) {
     this.fileLine = fileLine;
     this.instructionNum = instructionNum;
+    this.name = name;
+  }
+  
+  public int getLine(){
+    return this.fileLine;
+  }
+  
+  public int getInstructionNum(){
+    return this.instructionNum;
+  }
+  
+  public String getName(){
+    return this.name;
+  }
+  
+  public String toString(){
+    return this.getName();
+  }
+  
+  public void setLine(int line){
+    this.fileLine = line;
+  }
+  
+  public void setInstruction(int num){
+    this.instructionNum = num;
+  }
+  
+  public void setName(String name){
+    this.name = name;
   }
 }
