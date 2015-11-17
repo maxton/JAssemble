@@ -321,7 +321,7 @@ public class AssemblerTest {
    */
   @Test
   public void testAssembleNeg() throws Exception {
-    System.out.println("Assemble move pseudo-instruction");
+    System.out.println("Assemble neg pseudo-instruction");
     Assembler instance = new Assembler("main: neg $1, $2");
     short[] expResult = {0x4240, 0x3501};
     instance.assemble();
