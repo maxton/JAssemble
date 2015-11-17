@@ -185,7 +185,7 @@ public class Assembler {
         addi $rs, $rd, 1
       */
       case "sub":
-        this.instructions.add(new RegisterInstruction(Opcode.INV, regToInt(arg1), regToInt(arg3), 0));
+        this.instructions.add(new RegisterInstruction(Opcode.INV, regToInt(arg1), 0, regToInt(arg3)));
         this.currentInstruction++;
         ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg2), regToInt(arg1), 1);
         break;
@@ -223,6 +223,19 @@ public class Assembler {
         this.instructions.add(new RegisterInstruction(Opcode.CLR, regToInt(arg1), 0, regToInt(arg1)));
         this.currentInstruction++;
         ret = new ImmediateInstruction(Opcode.ORI, regToInt(arg1), regToInt(arg1), Integer.decode(arg2));
+        break;
+      /*
+        neg $rd, $rs
+        R[rd] = -R[rs]
+        
+        implemented as:
+        inv  $rd, $rs
+        addi $rd, $rd, 1
+      */
+      case "neg":
+        this.instructions.add(new RegisterInstruction(Opcode.INV, regToInt(arg1), 0, regToInt(arg2)));
+        this.currentInstruction++;
+        ret = new ImmediateInstruction(Opcode.ADDI, regToInt(arg1), regToInt(arg1), 1);
         break;
       default:
         throw new InvalidInstructionException(op);

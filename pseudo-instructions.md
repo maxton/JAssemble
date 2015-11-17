@@ -9,11 +9,23 @@ their *functionality* should always remain the same.
 ## Overview of Supported Instructions
 |Pseudoinstruction      |Result                                          |
 |-----------------------|------------------------------------------------|
+|`neg  $rd, $rs`        | `R[rd] = -R[rs]`                               |
 |`sub  $rd, $rs, $rt`   | `R[rd] = R[rs] - R[rt]`                        |
 |`subi $rs, $rd, IMM`   | `R[rd] = R[rs] - IMM`                          |
 |`move $rs, $rd`        | `R[rd] = R[rs]`                                |
 |`li $rd, IMM`          | `R[rd] = IMM`                                  |
 |`j LABEL`              | `PC = PC + offset(LABEL)`                      |
+
+### neg
+`neg  $rd, $rs` 
+#### Description
+Negates the contends of register $rd.
+#### Expansion
+```
+inv  $rd, $rs
+addi $rd, $rd, 1
+```
+
 
 ### sub
 `sub  $rd, $rs, $rt` 
