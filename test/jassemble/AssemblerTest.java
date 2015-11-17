@@ -264,7 +264,7 @@ public class AssemblerTest {
   public void testAssembleSub() throws Exception {
     System.out.println("Assemble sub pseudo-instruction");
     Assembler instance = new Assembler("main: sub $3, $2, $1\nsub $0, $1, $2");
-    short[] expResult = {0x44C0, 0x3B01, 0x4800, 0x3401};
+    short[] expResult = {0x41C0, 0x3B01, 0x4200, 0x3401};
     instance.assemble();
     short[] result = instance.getInstructionWords();
     assertArrayEquals(expResult, result);
@@ -309,6 +309,21 @@ public class AssemblerTest {
     System.out.println("Assemble move pseudo-instruction");
     Assembler instance = new Assembler("main: move $1, $2\nmove $3, $0");
     short[] expResult = {0x7A40, 0x70C0};
+    instance.assemble();
+    short[] result = instance.getInstructionWords();
+    assertArrayEquals(expResult, result);
+  }
+  
+  /**
+   * Test of assemble method, of class Assembler. (neg instruction)
+   * This implementation does neg $rd, $rs --> inv $rd, $rs
+   *                                           addi $rd, $rd, 1
+   */
+  @Test
+  public void testAssembleNeg() throws Exception {
+    System.out.println("Assemble move pseudo-instruction");
+    Assembler instance = new Assembler("main: neg $1, $2");
+    short[] expResult = {0x4240, 0x3501};
     instance.assemble();
     short[] result = instance.getInstructionWords();
     assertArrayEquals(expResult, result);
