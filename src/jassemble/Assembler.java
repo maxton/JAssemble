@@ -358,20 +358,4 @@ public class Assembler {
   public short[] getInstructionWords(){
     return this.instructionWords.clone();
   }
-  
-  /**
-   * For testing...
-   * @param args 
-   */
-  public static void main(String[] args){
-    Assembler a = new Assembler("main: lw $1, 0($2)\nlw $3, 2($1)\nj main\nlabel:");
-    try {
-      a.assemble();
-      for(short word : a.getInstructionWords())
-        System.out.println(String.format("%1$04x", word));
-    }
-    catch(Exception e){
-      System.out.println("Error: "+e.getMessage());
-    }
-  }
 }
