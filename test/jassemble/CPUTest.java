@@ -86,6 +86,12 @@ public class CPUTest {
     assertEquals(48, data[2]);
     assertEquals(0, instance.getRegister(1));
     assertEquals(48, instance.getRegister(2));
+    
+    as = new Assembler("li $0, 0xFF\nsw $0, 0($0)");
+    as.assemble();
+    instance = new CPU(as.getInstructionWords(), data);
+    instance.step(3);
+    assertEquals((byte)0xFF, data[255]);
   }
   
   @Test
