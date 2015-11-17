@@ -52,7 +52,7 @@ public class RegisterInstruction extends Instruction {
   public String toString() {
     switch(op){
       case INV:
-        return op.toString().toLowerCase() + " $" + rd + ", $"+rs;
+        return op.toString().toLowerCase() + " $" + rd + ", $"+rt;
       case CLR:
         return op.toString().toLowerCase() + " $" + rd;
       default:
