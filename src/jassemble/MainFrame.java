@@ -284,7 +284,8 @@ public class MainFrame extends javax.swing.JFrame {
     jLabel2.setText("©2015 Maxton Connor");
 
     jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel5.setText("Version 1.0.1");
+    jLabel5.setText("Version 1.1.0");
+    jLabel5.setToolTipText("");
 
     javax.swing.GroupLayout AboutPopupLayout = new javax.swing.GroupLayout(AboutPopup.getContentPane());
     AboutPopup.getContentPane().setLayout(AboutPopupLayout);
